@@ -1,0 +1,323 @@
+{% assign column = section.settings.product_per_row %}
+{% include 'column-width' %}
+
+<div class="container">
+    <div class="row">
+        <!--Sidebar-->
+        <div class="col-12 col-sm-12 col-md-3 col-lg-3 sidebar filterbar">
+            <div class="closeFilter d-block d-md-none d-lg-none"><i class="icon icon anm anm-times-l"></i></div>
+            <div class="sidebar_tags">
+            <!--Categories-->
+              <div class="sidebar_widget categories filter-widget">
+                  <div class="widget-title"><h2>Collections</h2></div>
+                  <div class="widget-content">
+                      <ul class="sidebar_categories">
+                        {% for collection in collections -%}                            
+                          <li class="lvl-1"><a href="{{ collection.url }}" class="site-nav">{{- collection.title | escape -}}</a></li>
+                        {%- endfor %}
+                      </ul>
+                  </div>
+              </div>
+              <!--Categories-->
+              {%- for filter in collection.filters -%}
+                {% case filter.type %}
+                {% when 'list' %}
+                  {% if filter.label == 'Product type' %}
+                    <div class="sidebar_widget filterBox filter-widget">
+                      <div class="widget-title"><h2>Product type</h2></div>
+                      <ul>
+                        {% for value in filter.values %}
+                          <li>
+                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" id="check{{ forloop.index }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                            <label for="check{{ forloop.index }}"><span><span></span></span>{{ value.label | escape }} ({{ value.count }})</label>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                  </div>
+                  {% endif %}
+                
+                  {% if filter.label == 'Brand' %}
+
+                    <!--Brand-->
+                  <div class="sidebar_widget filterBox filter-widget">
+                      <div class="widget-title"><h2>Brands</h2></div>
+                      <ul>
+                        {% for value in filter.values %}
+                          <li>
+                            <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" id="check{{ forloop.index }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                            <label for="check{{ forloop.index }}"><span><span></span></span>{{ value.label | escape }} ({{ value.count }})</label>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                  </div>
+                  <!--End Brand-->
+                  
+                  {% endif %}
+                
+                  {% if filter.label == 'Color' %}
+                    <!--Color Swatches-->
+                    <div class="sidebar_widget filterBox filter-widget">
+                      <div class="widget-title"><h2>Color</h2></div>
+                        <div class="filter-color swacth-list clearfix">
+                        {% for value in filter.values %}
+                            <span class="swacth-btn {{ value.value | downcase }}"></span>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <!--End Color Swatches--> 
+                  {% endif %}
+                {% if filter.label == 'Size' %}                  
+                  <!--Size Swatches-->
+                  <div class="sidebar_widget filterBox filter-widget size-swacthes">
+                      <div class="widget-title"><h2>Size</h2></div>
+                      <div class="filter-color swacth-list">
+                          <ul>
+                            {% for value in filter.values %}
+                              <li><span class="swacth-btn">{{ value.value }}</span></li>
+                            {% endfor %}
+                          </ul>
+                      </div>
+                  </div>
+                  <!--End Size Swatches-->
+                  {% endif %}
+                {% when 'price_range' %} 
+                <!--Price Filter-->
+                <div class="sidebar_widget filterBox filter-widget">
+                    <div class="widget-title">
+                        <h2>{{ filter.label | escape }}</h2>
+                    </div>
+                    {%- assign max_price_amount = filter.range_max | money | escape -%}
+                    <form action="#" method="post" class="price-filter">
+                        <div id="slider-range" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="no-margin"><input id="amount" type="text"></p>
+                            </div>
+                            <div class="col-6 text-right margin-25px-top">
+                                <button class="btn btn-secondary btn--small">filter</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--End Price Filter-->
+
+                {% endcase %}
+              {% endfor %}
+
+              {% if section.settings.popular != blank %}
+                {% assign popLimit = section.settings.product_limit %}
+                <!--Popular Products-->
+                <div class="sidebar_widget">
+                    <div class="widget-title"><h2>{{ section.settings.pop_title }}</h2></div>
+                    <div class="widget-content">
+                        <div class="list list-sidebar-products">
+                          <div class="grid">
+                            {% for product in section.settings.popular.products limit:popLimit %}
+                            <div class="grid__item">
+                              <div class="mini-list-item">
+                                <div class="mini-view_image">
+                                    <a class="grid-view-item__link" href="{{ product.url }}">
+                                        <img class="grid-view-item__image" src="{{ product.featured_image | img_url:'small' }}" alt="{{ product.title | escape }}">
+                                    </a>
+                                </div>
+                                <div class="details"> <a class="grid-view-item__title" href="{{ product.url }}">{{ product.title | escape }}</a>
+                                  <div class="grid-view-item__meta"><span class="product-price__price"><span class="money">{{ product.price | money }}</span></span></div>
+                                </div>
+                              </div>
+                            </div>
+                           {% endfor %}
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End Popular Products-->
+                {% endif %}
+                {% if section.settings.static_banner != nil %}
+                {% assign banner_url = section.settings.banner_url %}
+                <!--Banner-->
+                <div class="sidebar_widget static-banner">
+                    <img src="{{ section.settings.static_banner | img_url:'original' }}" alt="{{ section.settings.static_banner.alt | escape }}"{% if banner_url != blank %} onclick="window.location.href='{{ section.settings.banner_url }}'"{% endif %}>
+                </div>
+                <!--Banner-->
+                {% endif %}
+                {% if section.settings.info_content != blank %}
+                <!--Information-->
+                <div class="sidebar_widget">
+                    <div class="widget-title"><h2>{{ section.settings.info_title }}</h2></div>
+                    <div class="widget-content">{{ section.settings.info_content }}</div>
+                </div>
+                <!--end Information-->
+                {% endif %}
+                <!--Product Tags-->
+                <div class="sidebar_widget">
+                  <div class="widget-title">
+                    <h2>Product Tags</h2>
+                  </div>
+                  <div class="widget-content">
+                    <ul class="product-tags">
+                      {% for tag in collection.all_tags %}
+                      <li>{{- tag | link_to_tag: tag }}</li>
+                      {% endfor %}
+                    </ul>
+                    <span class="btn btn--small btnview">View all</span> </div>
+                </div>
+                <!--end Product Tags-->
+            </div>
+        </div>
+        <!--End Sidebar-->
+        <!--Main Content-->
+        <div class="col-12 col-sm-12 col-md-9 col-lg-9 main-col">
+          {% if section.settings.enable_description %}
+            <div class="category-description">
+                <h3>Description</h3>
+                {{ collection.description }}
+            </div>            
+            <hr>
+          {% endif %}
+            <div class="productList product-load-more" id="main-collection-grid" data-id="{{ section.id }}">
+                <!--Toolbar-->
+                <button type="button" class="btn btn-filter d-block d-md-none d-lg-none"> Product Filters</button>
+                <div class="toolbar">
+                    <div class="filters-toolbar-wrapper">
+                        <div class="row">                              
+                            <div class="col-6 col-md-6 col-lg-6 text-left filters-toolbar__item filters-toolbar__item--count d-flex align-items-center">
+                                <span class="filters-toolbar__product-count">Total products: {{ collection.products_count }}</span>
+                            </div>
+                            <div class="col-6 col-md-6 col-lg-6 text-right">
+                                <div class="filters-toolbar__item">
+                                    <label for="SortBy" class="hidden">Sort</label>
+                                    <select name="SortBy" id="SortBy" class="filters-toolbar__input filters-toolbar__input--sort">
+                                      {% for option in collection.sort_options %}
+                                        <option value="{{ option.value | escape }}" {% if option.value == sort_by %} selected="selected"{% endif %}>{{ option.name }}</option>
+                                      {% endfor %}
+                                    </select>
+                                    <input class="collection-header__default-sort" type="hidden" value="manual">
+                                </div>
+                            </div>
+  
+                        </div>
+                    </div>
+                </div>
+                <!--End Toolbar-->
+                <div class="grid-products grid--view-items" id="CollectionProductGrid">
+                    <div class="row">
+                        {% for product in collection.products %}
+                        {% render 'product-card', product:product, column_width: col_width %}
+                        {% endfor %}                          
+                    </div>
+                </div>
+            </div>
+            <div class="infinitpaginOuter">
+                <div class="infinitpagin">
+                    <a href="#" class="btn loadMore">Load More</a>
+                </div>
+            </div>
+        </div>
+        <!--End Main Content-->
+    </div>
+  </div>
+</div>
+
+{{ 'collection-filter.js' | asset_url | script_tag }}
+
+{% schema %}
+  {
+    "name": "Collection template",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_description",
+        "label": "Enable collection description",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "product_per_row",
+        "label": "Product per row",
+        "options":[
+          {
+            "label": "6 products",
+            "value": "2"
+          },
+          {
+            "label": "4 products",
+            "value": "3"
+          },
+          {
+            "label": "3 products",
+            "value": "4"
+          },
+          {
+            "label": "2 products",
+            "value": "6"
+          }
+        ],
+        "default": "4"
+      },
+      {
+        "type": "header",
+        "content": "Sidebar content"
+      },
+      {
+        "type": "header",
+        "content": "popular products"
+      },
+      {
+        "type": "text",
+        "id": "pop_title",
+        "label": "Title",
+        "default": "Popular products"
+      },
+      {
+        "type": "collection",
+        "id": "popular",
+        "label": "Popular products"
+      },
+      {
+        "type": "number",
+        "id": "product_limit",
+        "label": "Product to show",
+        "default": 5
+      },
+      {
+        "type": "header",
+        "content": "Static Banner"
+      },
+      {
+        "type": "image_picker",
+        "id": "static_banner",
+        "label": "Static Banner"
+      },
+      {
+        "type": "url",
+        "id": "banner_url",
+        "label": "Banner link"
+      },
+      {
+        "type": "header",
+        "content": "Info content"
+      },
+      {
+        "type": "text",
+        "id": "info_title",
+        "label": "Info title",
+        "default": "Information"
+      },
+      {
+        "type": "richtext",
+        "id": "info_content",
+        "label": "Info content"
+      }      
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

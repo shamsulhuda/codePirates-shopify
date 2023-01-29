@@ -1,0 +1,167 @@
+<!--Footer-->
+<footer id="footer" class="footer-2">
+  {% if section.blocks.size > 0 %}
+  {% for block in section.blocks %}
+  {% case block.type %}
+    {% when 'newsletter' %}
+    <div class="newsletter-section">
+        <div class="container">
+            <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-7 w-100 d-flex justify-content-start align-items-center">
+                        <div class="display-table">
+                            <div class="display-table-cell footer-newsletter">
+                                <div class="section-header text-center">
+                                    <label class="h2"><span>{{ block.settings.subtitle }} </span>{{ block.settings.title }}</label>
+                                </div>
+                                {% form 'contact' %}
+                                    <div class="input-group">
+                                        <input type="email" class="input-group__field newsletter__input" name="EMAIL" value="" placeholder="Email address" required="">
+                                        <span class="input-group__btn">
+                                            <button type="submit" class="btn newsletter__submit" name="commit" id="Subscribe"><span class="newsletter__submit-text--large">Subscribe</span></button>
+                                        </span>
+                                    </div>
+                                {% endform %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-5 d-flex justify-content-end align-items-center">
+                        <div class="footer-social">
+                            {% render 'social-media' %}
+                        </div>
+                    </div>
+                </div>
+        </div>    
+    </div>
+    {% when 'footer_links' %}
+    <div class="site-footer">
+        <div class="container">
+            <!--Footer Links-->
+            <div class="footer-top">
+                <div class="row">
+                  {% for menu in block.settings.footer_menu.links limit: 3 %}
+                    {% liquid
+                    case block.settings.footer_menu.links.size
+                    when 1
+                      assign column = 'col-md-6 col-lg-6'
+                    when 2
+                      assign column = 'col-md-4 col-lg-4'
+                    when 3
+                      assign column = 'col-md-3 col-lg-3'
+                    else
+                      assign column = 'col-md-3 col-lg-3'
+                    endcase
+                    %}
+                    <div class="col-12 col-sm-12 {{ column }} footer-links">
+                        <h4 class="h4">{{ menu.title }}</h4>
+                        <ul>
+                          {% for link in menu.links %}
+                            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                          {% endfor %}
+                        </ul>
+                    </div>
+                  {% endfor %}
+                    
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 contact-box">
+                        <h4 class="h4">{{ block.settings.content_title }}</h4>
+                        <ul class="addressFooter">
+                            {{ block.settings.content }}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--End Footer Links-->
+            <hr>
+            <div class="footer-bottom">
+                <div class="row">
+                    <!--Footer Copyright-->
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 order-1 order-md-0 order-lg-0 order-sm-1 copyright text-center"><span></span> {{ section.settings.copyright }}</div>
+                    <!--End Footer Copyright-->
+                </div>
+            </div>
+        </div>
+    </div>
+  {% endcase %}
+  {% endfor %}
+  {% endif %}
+</footer>
+<!--End Footer-->
+<!--Scoll Top-->
+<span id="site-scroll"><i class="icon bi bi-arrow-up"></i></span>
+<!--End Scoll Top-->
+
+{% schema %}
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "liquid",
+        "id": "copyright",
+        "label": "Copyright text",
+        "default": "Developed by <a href='https://softpico.com'>SoftPico</a> | {{ 'now' | date: '%Y' }}"
+      }
+    ],
+    "blocks":[
+      {
+        "type": "newsletter",
+        "name": "Newsletter",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Newsletter"
+          },
+          {
+            "type": "text",
+            "id": "subtitle",
+            "label": "Sub title",
+            "default": "Sign up for"
+          }
+        ]
+      },
+      {
+        "type": "footer_links",
+        "name": "Footer links",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "link_list",
+            "id": "footer_menu",
+            "label": "Footer menu"
+          },
+          {
+            "type": "header",
+            "content": "Menual content"
+          },
+          {
+            "type": "text",
+            "id": "content_title",
+            "label": "Title",
+            "default": "Contact us"
+          },
+          {
+            "type": "html",
+            "id": "content",
+            "label": "Content",
+            "default": "<li><p>55 Gallaxy Enque,2568 steet, 23568 NY</p></li>"
+          }
+        ]
+      }
+    ],
+    "default": {
+      "settings": {
+        "copyright": "Developed by <a href='https://softpico.com'>SoftPico</a> | {{ 'now' | date: '%Y' }}"
+      },
+      "blocks": [
+        {
+          "type": "newsletter"
+        },
+        {
+          "type": "footer_links"
+        }
+      ]
+    }
+  }
+
+{% endschema %}

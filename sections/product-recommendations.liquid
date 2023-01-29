@@ -1,0 +1,149 @@
+<!--Related Product Slider-->
+{% if section.settings.enable_recomendation %}
+{% liquid
+assign product_limit = section.settings.product_limit
+assign full-width = section.settings.full-width
+assign title-center = section.settings.title-center
+
+assign product_to_show = section.settings.product_to_show
+assign enable_arrows = section.settings.enable_arrows
+assign slide_to_scroll = section.settings.slide_to_scroll
+assign autoplay = section.settings.enable_autoplay
+%}
+
+<!--Related Product Slider-->
+<div class="product-recommendations related-product grid-products {% if full-width %}container-fluid{% else %}container{% endif %}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{- product_limit -}}" data-template="{{ template.name }}">
+  <header class="section-header {% if title-center %}text-center{% else %}text-left{% endif %}">
+    <h2 class="section-header__title h2"><span>{{ section.settings.title | escape }}</span></h2>
+    <p class="sub-heading">{{ section.settings.sub-heading }}</p>
+  </header>
+  <div class="productPageRecomm" data-slick='{"arrows": {{ enable_arrows}}, "slidesToShow": {{ product_to_show }}, "slidesToScroll": {{ slide_to_scroll }},"autoplay":{{ autoplay }}}'>
+    {%- for product in recommendations.products -%}
+    {% render 'product-card', product: product %} 
+    {% endfor %}
+  </div>
+</div>
+<!--End Related Product Slider-->
+{% endif %}
+
+{% javascript %}
+  const handleIntersection = (entries, observer) => {
+    if (!entries[0].isIntersecting) return;
+
+    observer.unobserve(productRecommendationsSection);
+
+    const url = productRecommendationsSection.dataset.url;
+
+    fetch(url)
+      .then(response => response.text())
+      .then(text => {
+        const html = document.createElement('div');
+        html.innerHTML = text;
+        const recommendations = html.querySelector('.product-recommendations');
+
+        if (recommendations && recommendations.innerHTML.trim().length) {
+          productRecommendationsSection.innerHTML = recommendations.innerHTML;
+        }
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  };
+
+  const productRecommendationsSection = document.querySelector('.product-recommendations');
+  const observer = new IntersectionObserver(handleIntersection, {rootMargin: '0px 0px 100px 0px'});
+
+  observer.observe(productRecommendationsSection);
+{% endjavascript %}
+
+{% schema %}
+  {
+    "name": "Product recomendations",
+    "settings": [      
+      {
+        "type": "checkbox",
+        "id": "enable_recomendation",
+        "label": "Enable recomended product",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Section title",
+        "default": "You might also like"
+      },
+      {
+        "type": "richtext",
+        "id": "sub-heading",
+        "label": "Sub-heading"
+      },      
+      {
+        "type": "range",
+        "id": "product_limit",
+        "label": "Product limit",
+        "min": 4,
+        "max": 20,
+        "step": 1,
+        "default": 10
+      },
+      {
+        "type": "checkbox",
+        "id": "title-center",
+        "label": "Title center",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "full-width",
+        "label": "Enable Full-width",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Slider control"
+      },
+      {
+        "type": "range",
+        "id": "product_to_show",
+        "label": "Product to show",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "slide_to_scroll",
+        "label": "Slide to scroll",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_arrows",
+        "label": "Enable arrows",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_autoplay",
+        "label": "Enable autoplay",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Recently view"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable-recent-view",
+        "label": "Enable recently viewed products",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}
+

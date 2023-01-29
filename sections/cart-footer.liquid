@@ -1,0 +1,77 @@
+<div class="container">
+    <div class="cart__footer{% if cart == empty %} is-empty{% endif %}" id="cart-footer" data-id="{{ section.id }}">
+      <div>
+        <div class="row justify-content-between">
+          {% for block in section.blocks %}
+          {% case block.type %}
+          {% when 'note' %}
+          <div class="col-md-8">
+            <div class="cart-note">
+              <div class="solid-border">
+                  <h5><label for="CartSpecialInstructions" class="cart-note__label small--text-center">Add a note to your order</label></h5>
+                  <textarea name="note" id="CartSpecialInstructions" class="cart-note__input"></textarea>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="col-md-4">
+            <div class="solid-border">
+              <div class="row js-contents">
+                <span class="col-12 col-sm-6 cart__subtotal-title"><strong>Subtotal</strong></span>
+                <span class="col-12 col-sm-6 cart__subtotal-title cart__subtotal text-right"><span class="money">{{ cart.total_price | money_with_currency }}</span></span>
+              </div>
+              <div class="cart__shipping">Shipping &amp; taxes calculated at checkout</div>
+              <p class="cart_tearm">
+                <label>
+                  <input type="checkbox" name="tearm" id="cartTearm" class="checkbox" value="tearm" required="">
+                   I agree with the terms and conditions</label>
+              </p>
+              <input type="submit" name="checkout" id="cartCheckout" class="btn btn--small-wide checkout" value="Checkout">
+  <!--             <div class="paymnet-img"><img src="assets/images/payment-img.jpg" alt="Payment"></div> -->
+            </div>
+          </div>
+          {% endcase %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+</div>
+  {% comment %}
+    <div class="empty_cart text-center">
+      {% if settings.empty_cart != nil %}
+      <img src="{{ settings.empty_cart | img_url:'medium' }}" alt="{{ settings.empty_cart.alt | escape }}">
+      {% endif %}
+      <div class="message">
+        <p>Woops! No Items in your cart! Add some favorite products in your cart!</p>
+        <div class="actions">
+          <a href="{{ routes.all_products_collection_url }}" class="button btn">Browse products</a>
+        </div>
+      </div>
+    </div>
+  {% endcomment %}
+
+
+{% schema %}
+  {
+    "name": "Cart Footer",
+    "settings": [],
+    "blocks":[      
+      {
+        "type": "note",
+        "name": "Cart Note",
+        "limit": 1
+      },
+      {
+        "type": "subtotal",
+        "name": "Subtotal",
+        "limit": 1
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

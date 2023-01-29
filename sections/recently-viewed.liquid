@@ -1,0 +1,150 @@
+{% if section.settings.enable_recentviewed %}
+{% liquid
+  assign full_width = section.settings.full_width
+  assign product_to_show = section.settings.product_to_show
+  assign enable_arrows = section.settings.enable_arrows
+  assign slide_to_scroll = section.settings.slide_to_scroll
+  assign autoplay = section.settings.enable_autoplay
+
+%}
+
+<div class="related-product recently-viewed-main grid-products {% if full_width %}container-fluid{% else %}container{% endif %}" data-template="{{ template.name }}">
+  <header class="section-header">
+    <h2 class="section-header__title text-center h2"><span>{{ section.settings.heading | escape }}</span></h2>
+  </header>
+  <div class="productPageSlider recently-viewed product-grid" role="list" data-slick='{"arrows": {{ enable_arrows}}, "slidesToShow": {{ product_to_show }}, "slidesToScroll": {{ slide_to_scroll }},"autoplay":{{ autoplay }}}'>
+  <!-- Recently viewed products will appear here -->
+  </div>
+</div>
+
+<script>
+function setRecentlyViewedProducts() {
+  const productData = {
+    productTitle: "{{ product.title }}",
+    productImg: "{{ product.featured_media | image_url: width: 533 }}",
+    imgWidth:"{{ product.featured_media.width }}",
+    imgHeight:"{{ product.featured_media.height }}",
+    productPrice: "{{ product.price | money_with_currency }}",
+    productUrl: "{{ product.url }}",
+    productImageAltText: "{{product.featured_media.alt | escape }}"
+  };
+  const productList = [];
+  let jsonResp, jsonRespArr, jsonRespArrStr;
+  const numberOfProducts = 10;
+  productList.push(productData);
+  const currProductPageTitle = productData.productTitle;
+  const productDataString = JSON.stringify(productList);
+  const localData = localStorage.getItem("recentlyViewedProduct");
+
+  if (localData === null) {
+    localStorage.setItem("recentlyViewedProduct", productDataString);
+  } else if (localData) {
+    const oldProductData = localStorage.getItem("recentlyViewedProduct");
+    const countProductData = (oldProductData.match(/productTitle/g) || []).length;
+    const sameProduct = oldProductData.includes(currProductPageTitle);
+    if (countProductData < numberOfProducts && sameProduct == false) {
+      jsonResp = JSON.parse(oldProductData);
+      jsonRespArr = jsonResp.concat(productList);
+      jsonRespArrStr = JSON.stringify(jsonRespArr);
+      localStorage.setItem("recentlyViewedProduct", jsonRespArrStr);
+    } else if (countProductData >= numberOfProducts && sameProduct == false) {
+      jsonResp = JSON.parse(oldProductData);
+      jsonResp.shift();
+      jsonRespArr = jsonResp.concat(productList);
+      jsonRespArr = JSON.stringify(jsonRespArr);
+      localStorage.setItem("recentlyViewedProduct", jsonRespArr);
+    }
+  }
+}
+
+setRecentlyViewedProducts();
+const localViewed = localStorage.recentlyViewedProduct;
+function getRecentlyViewedProducts() {
+  const productData = JSON.parse(localStorage.getItem("recentlyViewedProduct"));
+  const recentlyViewedHtml = [];
+  productData.map(item => {
+    recentlyViewedHtml.unshift(`
+    <div class="col-12 item">
+      <div class="product-image">
+          <a href="${item.productUrl}">
+              <img class="primary blur-up lazyload" data-src="${item.productImg}" alt="${item.productImageAltText}" title="${item.productTitle}">
+          </a>
+      </div>
+      <div class="product-details text-center">
+          <div class="product-name">
+              <a href="${item.productUrl}">${item.productTitle}</a>
+          </div>
+      </div>
+    </div>
+   `);
+  });
+  const newProductData = `${recentlyViewedHtml.join("")}`;
+  const fullContent = document.getElementsByClassName("recently-viewed");
+  fullContent[0].innerHTML = newProductData;
+}
+
+document.addEventListener("DOMContentLoaded", function (event) {
+  getRecentlyViewedProducts();
+});
+</script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Recent Products",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_recentviewed",
+        "label": "Enable Recent view",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "default": "Recently Viewed",
+        "label": "Title"
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Enable Full-width",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Slider control"
+      },
+      {
+        "type": "range",
+        "id": "product_to_show",
+        "label": "Product to show",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "slide_to_scroll",
+        "label": "Slide to scroll",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_arrows",
+        "label": "Enable arrows",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_autoplay",
+        "label": "Enable autoplay",
+        "default": false
+      }
+    ]
+  }
+{% endschema %}

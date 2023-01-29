@@ -1,0 +1,7 @@
+<i class="icon bi bi-bag"></i>
+<div class="cart-counter">
+{% if cart != emplty %}
+  <span id="CartCount" class="site-header__cart-count" data-cart-render="item_count">{{- cart.item_count -}}</span>
+{% endif %}
+</div>
+

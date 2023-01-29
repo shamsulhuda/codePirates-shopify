@@ -1,0 +1,173 @@
+<cart-items id="page-content" class="mb-4{% if cart == empty %} is-empty{% endif %}">
+  <!--Page Title-->
+  <div class="page section-header text-center">
+    <div class="page-title">
+      <div class="wrapper">
+        <h1 class="page-width">Your cart</h1>
+      </div>
+    </div>
+  </div>
+  <!--End Page Title-->
+
+  <div class="container" id="mainCartSection">
+    <div id="main-cart-section" data-id="{{ section.id }}">
+      <div class="js-contents">
+        {% if cart != empty %}
+          <div class="main-cart-form">
+            <form
+              action="{{ routes.cart_url }}"
+              method="post"
+              class="cart style2">
+              <div class="table-responsive-sm">
+                <table>
+                  <thead class="cart__row cart__header">
+                    <tr>
+                      <th colspan="2" class="text-center">Product</th>
+                      <th class="text-center">Price</th>
+                      <th class="text-center">Quantity</th>
+                      <th class="text-right">Total</th>
+                      <th class="action">&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in cart.items %}
+                      <tr class="cart__row border-bottom line1 cart-flex border-top" id="cartItem-{{ item.index | plus: 1 }}">
+                        <td class="cart__image-wrapper cart-flex-item">
+                          <a href="{{ item.url }}"><img
+                              class="cart__image"
+                              src="{{ item.image | img_url:'small' }}"
+                              alt="{{ item.title }}"
+                              loading="lazy"></a>
+                        </td>
+                        <td class="cart__meta small--text-left cart-flex-item">
+                          <div class="list-view-item__title">
+                            <a href="{{ item.url }}">{{ item.title }}</a>
+                          </div>
+                          {% unless item.product.has_only_default_variant %}
+                            <div class="cart__meta-text">
+                              {% for option in item.options_with_values %}
+                                {{ option.name }}: {{ option.value }} <br>
+                              {% endfor %}
+                            </div>
+                          {% endunless %}
+                          <p class="cart-item__error" id="Line-item-error-{{ item.index | plus: 1 }}">
+                            <span class="cart-item__error-text"></span>
+                            <svg
+                              aria-hidden="true"
+                              focusable="false"
+                              role="presentation"
+                              class="icon icon-error"
+                              viewBox="0 0 13 13">
+                              <circle
+                                cx="6.5"
+                                cy="6.50049"
+                                r="5.5"
+                                stroke="white"
+                                stroke-width="2" />
+                              <circle
+                                cx="6.5"
+                                cy="6.5"
+                                r="5.5"
+                                fill="#EB001B"
+                                stroke="#EB001B"
+                                stroke-width="0.7" />
+                              <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white" />
+                              <path
+                                d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z"
+                                fill="white"
+                                stroke="#EB001B"
+                                stroke-width="0.7">
+                            </svg>
+                          </p>
+                        </td>
+                        <td class="cart__price-wrapper cart-flex-item">
+                          <span class="money">{{ item.price | money }}</span>
+                        </td>
+                        <td class="cart__update-wrapper cart-flex-item text-right">
+                          <div class="cart__qty text-center">
+                            <quantity-input class="qtyField">
+                              <button
+                                type="button"
+                                class="qty qtyCartBtn minus"
+                                name="minus"></button>
+                              <input
+                                class="cart__qty-input qty"
+                                type="number"
+                                name="updates[]"
+                                id="quantity-{{ item.index | plus: 1 }}"
+                                value="{{ item.quantity }}"
+                                data-index="{{ item.index | plus: 1 }}"
+                                pattern="[0-9]*">
+                              <button
+                                type="button"
+                                class="qty qtyCartBtn plus"
+                                name="plus"></button>
+                            </quantity-input>
+                          </div>
+                        </td>
+                        <td class="text-right cart-price">
+                          <div class="loading-overlay hidden">
+                            {% render 'icons', icon: 'loader' %}
+                          </div>
+                          <div class="line-price-wrapper">
+                            <span class="money">{{ item.final_line_price | money }}</span>
+                          </div>
+                        </td>
+                        <td class="text-center">
+                          <cart-remove data-index="{{ item.index | plus: 1 }}">
+                            <a
+                              href="/cart/change?line={{ forloop.index }}&quantity=0"
+                              class="btn btn--secondary cart__remove"
+                              data-index="{{ item.index | plus: 1 }}"
+                              title="Remove tem">
+                              <i class="icon bi bi-x"></i>
+                            </a>
+                          </cart-remove>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="3" class="text-left">
+                        <a href="#" class="btn--link cart-continue">
+                          <i class="icon icon-arrow-circle-left"></i>
+                          Continue shopping</a>
+                      </td>
+                      <td colspan="3" class="text-right">
+                        <button
+                          type="submit"
+                          name="update[]"
+                          class="btn--link cart-update">
+                          <i class="fa fa-refresh"></i>
+                          Update</button>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</cart-items>
+<script src="{{ 'cart.js' | asset_url }}" defer></script>
+<!--  Cart footer here -->
+{% comment %} cart-footer section here{% endcomment %}
+
+<!--End Body Content-->
+  {% schema %}
+{
+  "name": "Cart template",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

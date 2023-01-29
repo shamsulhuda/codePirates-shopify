@@ -1,0 +1,86 @@
+<!--Product Fearure-->
+<div class="product-template__container prstyle1 container">
+  <div class="prFeatures">
+      <div class="row">
+        {% for block in section.blocks %}
+          <div class="col-12 col-sm-6 col-md-3 col-lg-3 feature" {{ block.shopify_attributes }}>
+              <img src="{{ block.settings.payment_icon | img_url:'medium' }}" alt="{{ block.settings.title }}" title="{{ block.settings.title | escape }}" />
+              <div class="details"><h3>{{ block.settings.title | escape }}</h3>{{ block.settings.details }}</div>
+          </div>
+        {% endfor %}        
+      </div>
+  </div>
+</div>
+<!--End Product Fearure-->
+{% schema %}
+  {
+    "name": "Service features",
+    "max_blocks": 4,
+    "settings": [
+      
+    ],
+    "blocks":[
+      {
+        "type": "feature",
+        "name": "Feature",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "payment_icon",
+            "label": "Select Icon"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Feature title"
+          },
+          {
+            "type": "richtext",
+            "id": "details",
+            "label": "Details"
+          }
+        ]
+      }
+    ],
+    "default":{
+      "settings":{},
+      "blocks":[
+        {
+          "type": "feature",
+          "settings":{
+            "title": "Safe Payment",
+            "details": "<p>Pay with the world's most payment methods.</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings":{
+            "title": "Confidence",
+            "details": "<p>Protection covers your purchase and personal data.</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings":{
+            "title": "Worldwide delivery",
+            "details": "<p>FREE & fast shipping to over 200+ countries & regions.</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings":{
+            "title": "Hotline",
+            "details": "<p>Talk to help line for your question on 4141 456 789, 4125 666 888</p>"
+          }
+        }
+      ]
+    }    
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

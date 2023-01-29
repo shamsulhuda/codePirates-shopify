@@ -1,0 +1,56 @@
+<mini-cart id="header-cart" class="block block-cart{% if cart == empty %} is-empty{% endif %}" data-id="{{ section.id }}">
+{% if cart != empty %}
+  <form action="{{ routes.cart_url }}" method="post">
+  <ul class="mini-products-list js-contents">
+    {% for item in cart.items %}
+      <li class="item">
+          <a class="product-image" href="{{ item.url }}">
+              <img src="{{ item.image | img_url:'small' }}" alt="{{ item.title }}" title="{{ item.title }}" />
+          </a>
+          <div class="product-details">
+              <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="remove"><i class="bi bi-x"></i></a>                                      
+              <a class="pName" href="{{ item.url }}">{{ item.title }}</a>
+              {% unless item.product.has_only_default_variant %}
+              {% for option in item.options_with_values %}
+              <div class="variant-cart">{{ option.name }}: {{ option.value }}</div>
+              {% endfor %}
+              {% endunless %}
+              <div class="wrapQtyBtn">
+                  <quantity-input-mini class="qtyField">
+                      <span class="label">Qty:</span>
+                      <button type="button" class="qty qtyBtn minus" name="minus" href="javascript:void(0);"></button>
+                      <input type="number" id="Quantity" name="updates[]" value="{{ item.quantity }}" class="product-form__input qty" data-index="{{ item.index | plus:1 }}">
+                      <button type="button" class="qty qtyBtn plus" name="plus" href="javascript:void(0);"></button>
+                  </quantity-input-mini>
+              </div>
+              <div class="priceRow">
+                  <div class="product-price">
+                      <span class="money">{{ item.price | money }}</span>
+                  </div>
+               </div>
+          </div>
+      </li>
+      {% endfor %}                              
+  </ul>                          
+  <div class="total">
+      <div class="total-in">
+          <span class="label">Cart Subtotal:</span><span class="product-price"><span class="money">{{ cart.items_subtotal_price | money }}</span></span>
+      </div>
+       <div class="buttonSet d-flex text-center">
+          <a href="/cart" class="btn btn-secondary btn--small">View Cart</a>
+          <button type="submit" name="checkout" class="btn btn-secondary btn--small">Checkout</a>
+      </div>
+  </div>
+</form>
+  
+  {% else %}
+  <div class="empty_cart text-center">
+    {% if settings.empty_cart != nil %}
+      <img src="{{ settings.empty_cart | img_url:'medium' }}" alt="{{ settings.empty_cart.alt | escape }}">
+    {% endif %}
+    <div class="message py-4">
+      <p>No Items in your cart!</p>
+    </div>
+  </div>
+  {% endif %}
+</mini-cart>

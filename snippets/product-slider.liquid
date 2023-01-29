@@ -1,0 +1,78 @@
+{% comment %} 
+{% render 'product-card', product:product %}
+product: product object
+{% endcomment %}
+
+{% assign lazyload = settings.enable_lazyload %}
+<div class="item">
+    <!-- start product image -->
+    <div class="product-image 
+      {% if settings.enable_product_scnd_img and product.images.size > 1 %}
+      is-second-image
+      {% endif %}
+      ">
+        <!-- start product image -->
+        <a href="{{ product.url }}">
+            <!-- image -->
+            <img class="primary {% if lazyload %}blur-up lazyload{% endif %}" data-src="{{ product.featured_image | img_url:'large' }}" src="{{ product.featured_image | img_url:'large' }}" alt="{{ product.featured_image.alt}}" title="{{ product.title }}">
+            <!-- End image -->
+            
+            {% if settings.enable_product_scnd_img and product.images.size > 1 %}
+            <!-- Hover image -->
+            <img class="hover {% if lazyload %}blur-up lazyload{% endif %}" data-src="{{ product.images[1] | img_url:'large' }}" src="{{ product.images[1] | img_url:'large' }}" alt="{{ product.images[1].alt}}" title="{{ product.title }}">
+            <!-- End hover image -->
+            {% endif %}
+            {% if settings.enable_product_badge %}
+            <!-- product label -->
+            <div class="product-labels rectangular">
+              {% unless product.available %}
+                <span class="lbl pr-label1">Sold out</span>
+              {% else %}
+                {% if product.compare_at_price > product.price %}
+                  <span class="lbl on-sale">Sale</span>
+                {% elsif product.tags contains 'preorder' %}
+                  <span class="lbl on-sale">Pre Order</span>
+                {% elsif product.tags contains 'new' %}
+                  <span class="lbl pr-label1">New</span>
+                {% endif %}
+              {% endunless %}              
+            </div>
+            <!-- End product label -->
+          {% endif %}
+        </a>
+        <!-- end product image -->
+        <!-- Start product button -->
+        {% form 'product', product, class:"variants add" %}          
+          {% if product.has_only_default_variant %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button class="btn btn-addto-cart" type="submit" tabindex="0">Add To Cart</button>
+          {% else %}
+          <a href="{{ product.url }}" class="btn btn-details" tabindex="0">View Details</a>
+          {% endif %}          
+        {% endform %}
+        {% if settings.enable_quick_view %}
+        <div class="button-set">
+          <a href="javascript:void(0)" title="Quick View" class="quick-view-popup quick-view" data-pro-handle="{{ product.handle }}">
+            <i class="icon bi bi-zoom-in"></i>
+          </a>
+        </div>
+        {% endif %}
+        <!-- end product button -->
+    </div>
+    <!-- end product image -->
+    <!--start product details -->
+    <div class="product-details text-center">
+        <!-- product name -->
+        <div class="product-name">
+            <a href="{{ product.url }}">{{ product.title | escape }}</a>
+        </div>
+        <!-- End product name -->
+        <!-- product price -->
+        {% render 'price', product:product %}
+        <!-- End product price -->
+        
+        <!-- End Variant -->
+    </div>
+    <!-- End product details -->
+</div>

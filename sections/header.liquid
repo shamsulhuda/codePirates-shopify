@@ -1,0 +1,338 @@
+
+<!--Header-->
+  <div class="header-wrap animated d-flex border-bottom">
+      <div class="container-fluid">        
+          <div class="row align-items-center">
+              <!--Desktop Logo-->
+              <div class="logo col-md-2 col-lg-2 d-none d-lg-block">
+                  <a href="{{ shop.url }}">
+                    {% if section.settings.logo != nil %}
+                      <img src="{{ section.settings.logo | img_url:'medium' }}" alt="{{ shop.name | escape }}" title="{{ shop.name | escape }}"/>
+                    {% else %}
+                      {{ shop.name | escape | upcase }}
+                    {% endif %}
+                  </a>
+              </div>
+              <!--End Desktop Logo-->
+              <div class="col-2 col-sm-3 col-md-3 col-lg-8">
+                  <div class="d-block d-lg-none">
+                      <button type="button" class="btn--link site-header__menu js-mobile-nav-toggle mobile-nav--open">
+                          <i class="bi bi-justify"></i>
+                      </button>
+                  </div>
+                  <!--Desktop Menu-->
+                  <nav class="grid__item" id="AccessibleNav"><!-- for mobile -->
+                      <ul id="siteNav" class="site-nav medium center">
+                        {% for link in section.settings.menu.links %}
+                          <li class="lvl1 parent {% if link.links.size == 0 %}megamenu{% elsif link.links.size > 0 %}dropdown{% else %}no-drop{% endif %}">
+                          <a href="{{ link.url }}">{{ link.title }} {% if link.links.size > 0 %}<i class="bi bi-chevron-down"></i>{% endif %}</a>
+                          {% if link.links.size > 0 %}
+                            <ul class="dropdown">
+                            {% for child in link.links %}
+                              <li>
+                              <a href="{{ child.url }}" class="site-nav">{{ child.title }} {% if child.links.size > 0 %}<i class="bi bi-chevron-right"></i>{% endif %}</a>
+                                {% if child.links.size > 0 %}
+                                  <ul class="dropdown">
+                                      {% for grandchild in child.links %}
+                                      <li><a href="{{ grandchild.url }}" class="site-nav">{{ grandchild.title }}</a></li>
+                                      {% endfor %}
+                                   </ul>
+                                {% endif %}
+                              </li>
+                              {% endfor %}                            
+                            </ul>
+                          {% endif %}
+                            {% if link.links.size == 0 %}
+                              {% for block in section.blocks %}
+                                {% render 'mega-menu', block:block, main_menu: link %}
+                              {% endfor %}
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                        {% if section.settings.enable_extra_btn %}
+                        <li class="lvl1"><a href="{{ section.settings.ex_btn_url }}"><b>{{ section.settings.ex_btn_label }}</b></a></li>
+                        {% endif %}
+                    </ul>
+                  </nav>
+                  <!--End Desktop Menu-->
+              </div>
+              <!--Mobile Logo-->
+              <div class="col-6 col-sm-6 col-md-6 col-lg-2 d-block d-lg-none mobile-logo">
+                  <div class="logo">
+                      <a href="{{ shop.url }}">
+                        {% if section.settings.logo != nil %}
+                          <img src="{{ section.settings.logo | img_url:'medium' }}" alt="{{ shop.name | escape }}" title="{{ shop.name | escape }}"/>
+                        {% else %}
+                          {{ shop.name | escape | upcase }}
+                        {% endif %}
+                      </a>
+                  </div>
+              </div>
+              <!--Mobile Logo-->
+              <div class="col-4 col-sm-3 col-md-3 col-lg-2">
+                  <div class="site-cart">
+                    <a href="/cart" id="cart_counter" class="site-header__cart" title="Cart">
+                      <i class="icon bi bi-bag"></i>
+                      <div class="cart-counter">
+                      {% if cart != emplty %}
+                        <span id="CartCount" class="site-header__cart-count" data-cart-render="item_count">{{- cart.item_count -}}</span>
+                      {% endif %}
+                      </div>
+                    </a>
+                      {% if template.name != 'cart' %}
+                      <!--Minicart Popup--> 
+                      <mini-cart id="header-cart" class="block block-cart">
+                        {% if cart.item_count > 0 %}
+                          <form action="{{ routes.cart_url }}" method="post">
+                          <ul class="mini-products-list js-contents">
+                            {% for item in cart.items %}
+                              <li class="item">
+                                  <a class="product-image" href="{{ item.url }}">
+                                      <img src="{{ item.image | img_url:'small' }}" alt="{{ item.title }}" title="{{ item.title }}" />
+                                  </a>
+                                  <div class="product-details">
+                                      <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="remove"><i class="bi bi-x"></i></a>                                      
+                                      <a class="pName" href="{{ item.url }}">{{ item.title }}</a>
+                                      {% unless item.product.has_only_default_variant %}
+                                      {% for option in item.options_with_values %}
+                                      <div class="variant-cart">{{ option.name }}: {{ option.value }}</div>
+                                      {% endfor %}
+                                      {% endunless %}
+                                      <div class="wrapQtyBtn">
+                                          <quantity-input class="qtyField">
+                                              <span class="label">Qty:</span>
+                                              <button type="button" class="qty qtyCartBtn minus" name="minus" href="javascript:void(0);"></button>
+                                              <input type="number" id="Quantity" name="updates[]" value="{{ item.quantity }}" class="product-form__input qty" data-index="{{ item.index | plus:1 }}">
+                                              <button type="button" class="qty qtyCartBtn plus" name="plus" href="javascript:void(0);"></button>
+                                          </quantity-input>
+                                      </div>
+                                      <div class="priceRow">
+                                          <div class="product-price">
+                                              <span class="money">{{ item.price | money }}</span>
+                                          </div>
+                                       </div>
+                                  </div>
+                              </li>
+                              {% endfor %}                              
+                          </ul>                          
+                          <div class="total">
+                              <div class="total-in">
+                                  <span class="label">Cart Subtotal:</span><span class="product-price"><span class="money">{{ cart.items_subtotal_price | money }}</span></span>
+                              </div>
+                               <div class="buttonSet d-flex text-center">
+                                  <a href="/cart" class="btn btn-secondary btn--small">View Cart</a>
+                                  <button type="submit" name="checkout" class="btn btn-secondary btn--small">Checkout</a>
+                              </div>
+                          </div>
+                        </form>
+                          
+                          {% else %}
+                          <div class="empty_cart text-center">
+                            {% if settings.empty_cart != nil %}
+                              <img src="{{ settings.empty_cart | img_url:'medium' }}" alt="{{ settings.empty_cart.alt | escape }}">
+                            {% endif %}
+                            <div class="message py-4">
+                              <p>No Items in your cart!</p>
+                            </div>
+                          </div>
+                          {% endif %}
+                        </mini-cart>
+                      <!--End Minicart Popup-->
+                      {% endif %}
+                  </div>
+                  <div class="site-header__search">
+                      <button type="button" class="search-trigger"><i class="icon bi bi-search"></i></button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+<!--End Header-->
+
+  <!--Mobile Menu-->
+  <div class="mobile-nav-wrapper" role="navigation">
+      <div class="closemobileMenu"><i class="bi bi-x pull-right"></i> Close Menu</div>
+      <ul id="MobileNav" class="mobile-nav">
+      {% for menu in section.settings.menu.links %}
+        <li class="lvl1 parent {% if menu.links.size > 0 %}megamenu{% endif %}"><a href="{{ menu.url }}">{{ menu.title }} {% if menu.links.size > 0 %}<i class="bi bi-plus"></i>{% endif %}</a>
+          {% if menu.links.size > 0 %}
+          <ul>
+            {% for child in menu.links %}
+            <li>
+              <a href="{{ child.url }}" class="site-nav">{{ child.title }}{% if child.links.size > 0 %}<i class="bi bi-plus"></i>{% endif %}</a>
+              <ul>
+                {% for grandchild in child.links %}
+                <li><a href="{{ grandchild.url }}" class="site-nav">{{ grandchild.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+      {% if section.settings.enable_extra_btn %}
+      <li class="lvl1"><a href="{{ section.settings.ex_btn_url }}"><b>{{ section.settings.ex_btn_label }}</b></a></li>
+      {% endif %}
+    </ul>
+  </div>
+  <!--End Mobile Menu-->
+
+{% if section.settings.logo != blank %}
+  <style>
+    .logo a img {
+      display: block;
+      width: {{ section.settings.logo_width }}px;
+      max-width: {{ section.settings.logo_max_width }}px;
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": [      
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "min": 50,
+        "max": 250,
+        "step": 5,
+        "unit": "px",
+        "label": "Custom logo width",
+        "default": 120
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 50,
+        "max": 450,
+        "step": 10,
+        "unit": "px",
+        "label": "Custom logo max-width",
+        "default": 250
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "header",
+        "content": "Extra Button"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_extra_btn",
+        "label": "Enable Extra Button",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "ex_btn_label",
+        "label": "Button label",
+        "default": "Buy Now!"
+      },
+      {
+        "type": "url",
+        "id": "ex_btn_url",
+        "label": "Button url"
+      }
+    ],
+    "blocks":[
+      {
+        "type": "mega_menu",
+        "name": "Mega menu",
+        "settings": [
+          {
+            "type": "text",
+            "id": "belongs_to",
+            "label": "Menu belongs to",
+            "info": "Insert the main menu name"
+          },
+          {
+            "type": "link_list",
+            "id": "menu",
+            "label": "Select menu"
+          },
+          {
+            "type": "select",
+            "id": "style",
+            "label": "Style",
+            "options":[
+              {
+                "label": "style 1",
+                "value": "style1"
+              },
+              {
+                "label": "style 2",
+                "value": "style2"
+              }
+            ],
+            "default": "style1"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "For style 2"
+          },
+          {
+            "type": "url",
+            "id": "banner_link",
+            "label": "Url"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "{{ shop.name }}",
+  {% if section.settings.logo %}
+    {% assign image_size = section.settings.logo.width | append:'x' %}
+    "logo": "https:{{ section.settings.logo | img_url: image_size }}",
+  {% endif %}
+  "sameAs": [
+    "{{ settings.social_twitter_link }}",
+    "{{ settings.social_facebook_link }}",
+    "{{ settings.social_pinterest_link }}",
+    "{{ settings.social_instagram_link }}",
+    "{{ settings.social_tumblr_link }}",
+    "{{ settings.social_snapchat_link }}",
+    "{{ settings.social_youtube_link }}",
+    "{{ settings.social_vimeo_link }}"
+  ],
+  "url": "{{ shop.url }}{{ page.url }}"
+}
+</script>
+
+{% if template.name == 'index' %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": "{{ shop.name }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ shop.url }}/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "url": "{{ shop.url }}{{ page.url }}"
+    }
+  </script>
+{% endif %}

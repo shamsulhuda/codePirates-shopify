@@ -1,0 +1,90 @@
+<!-- From snippets/featured-collection.liquid -->
+{% assign limit = section.settings.product_limit %}
+{% assign view_style = section.settings.view_style %}
+<div class="section">
+  <div class="container">
+      <div class="row">
+          <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+              <div class="section-header text-center">
+                  <h2 class="h2">
+                  {% if section.settings.title != blank %}
+                  {{ section.settings.title }}
+                  {% else %}
+                  {{ section.settings.collection.title | default: 'Featured collection'}}
+                  {% endif %}
+                  </h2>
+                  {{ section.settings.subtext }}
+              </div>
+              <div class="grid-products">                
+                {% case view_style %}
+                  {% when 'grid' %}
+                  <div class="row">
+                    {% for product in section.settings.collection.products limit: limit %}
+                      {% render 'product-card', product:product %}
+                    {% endfor %}
+                  </div>
+                  {% when 'slider' %}
+                  <div class="productSlider">
+                    {% for product in section.settings.collection.products limit: limit %}
+                      {% render 'product-slider', product:product %}
+                    {% endfor %}
+                  </div>
+                {% endcase %}
+              </div>
+          </div>
+      </div>    
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "class": "featured-collection",
+  "settings": [
+     {
+       "type": "text",
+       "id": "title",
+       "label": "Title"
+     },
+     {
+       "type": "richtext",
+       "id": "subtext",
+       "label": "Sub-text",
+       "default": "<p>Our most popular products based on sales</p>"
+     },
+     {
+       "type": "collection",
+       "id": "collection",
+       "label": "Collection"
+     },
+     {
+       "type": "select",
+       "id": "view_style",
+       "label": "View style",
+       "options":[
+         {
+           "label": "Slider",
+           "value": "slider"
+         },
+         {
+           "label": "Grid",
+           "value": "grid"
+         }
+       ],
+       "default": "slider"
+     },
+     {
+       "type": "number",
+       "id": "product_limit",
+       "label": "Product limit",
+       "default": 4
+     }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection"
+    }
+  ]
+}
+{% endschema %}

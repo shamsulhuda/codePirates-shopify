@@ -1,0 +1,171 @@
+{
+  "current": {
+    "enable_quick_view": true,
+    "empty_cart": "shopify:\/\/shop_images\/empty-cart.png",
+    "sections": {
+      "collection-list": {
+        "type": "collection-list",
+        "blocks": {
+          "collection-list-0": {
+            "type": "collection",
+            "settings": {
+            }
+          },
+          "collection-list-1": {
+            "type": "collection",
+            "settings": {
+            }
+          },
+          "collection-list-2": {
+            "type": "collection",
+            "settings": {
+            }
+          }
+        },
+        "block_order": [
+          "collection-list-0",
+          "collection-list-1",
+          "collection-list-2"
+        ],
+        "settings": {
+        }
+      },
+      "featured-collection": {
+        "type": "featured-collection",
+        "settings": {
+        }
+      },
+      "featured-product": {
+        "type": "featured-product",
+        "settings": {
+        }
+      },
+      "top-header": {
+        "type": "top-header",
+        "settings": {
+          "announcement_bar_enabled": true,
+          "announcement_bar_home_page_only": true,
+          "announcement_bar_text": "20% off your very first purchase, use promo code: FASSION69",
+          "announcement_bar_link": ""
+        }
+      },
+      "header": {
+        "type": "header",
+        "blocks": {
+          "15594b95-4a47-41c6-b6b1-78879843b810": {
+            "type": "mega_menu",
+            "settings": {
+              "belongs_to": "Shop",
+              "menu": "mega-menu",
+              "style": "style1",
+              "banner_link": ""
+            }
+          },
+          "a674c225-4197-4c26-b628-a250db6b7de3": {
+            "type": "mega_menu",
+            "settings": {
+              "belongs_to": "home",
+              "menu": "mega-menu",
+              "style": "style2",
+              "banner_link": ""
+            }
+          }
+        },
+        "block_order": [
+          "15594b95-4a47-41c6-b6b1-78879843b810",
+          "a674c225-4197-4c26-b628-a250db6b7de3"
+        ],
+        "settings": {
+          "logo": "shopify:\/\/shop_images\/mylogo.png",
+          "logo_width": 120,
+          "logo_max_width": 250,
+          "menu": "main-menu",
+          "enable_extra_btn": true,
+          "ex_btn_label": "Buy Now!",
+          "ex_btn_url": ""
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "7e4c0e19-d3da-4ee2-8e47-3c48f70dada1": {
+            "type": "newsletter",
+            "settings": {
+              "title": "Newsletter",
+              "subtitle": "Sign up for"
+            }
+          },
+          "77c6b399-6808-4340-bd70-0a3ebd00e5c4": {
+            "type": "footer_links",
+            "settings": {
+              "footer_menu": "footer",
+              "content_title": "Contact us",
+              "content": "<li>\n<i class=\"icon bi bi-geo-alt\"><\/i><p>55 Gallaxy Enque,<br>2568 steet, 23568 NY<\/p>\n<\/li>\n                            <li class=\"phone\">\n<i class=\"icon bi bi-telephone\"><\/i><p>(440) 000 000 0000<\/p>\n<\/li>\n                            <li class=\"email\">\n<i class=\"icon bi bi-envelope\"><\/i><p>sales@yousite.com<\/p>\n<\/li>"
+            }
+          }
+        },
+        "block_order": [
+          "7e4c0e19-d3da-4ee2-8e47-3c48f70dada1",
+          "77c6b399-6808-4340-bd70-0a3ebd00e5c4"
+        ],
+        "settings": {
+          "copyright": "Developed by <a href='https:\/\/softpico.com'>SoftPico<\/a> | {{ 'now' | date: '%Y' }}"
+        }
+      }
+    },
+    "content_for_index": [
+      "collection-list",
+      "featured-collection",
+      "featured-product"
+    ]
+  },
+  "presets": {
+    "Default": {
+      "sections": {
+        "collection-list": {
+          "type": "collection-list",
+          "blocks": {
+            "collection-list-0": {
+              "type": "collection",
+              "settings": {
+              }
+            },
+            "collection-list-1": {
+              "type": "collection",
+              "settings": {
+              }
+            },
+            "collection-list-2": {
+              "type": "collection",
+              "settings": {
+              }
+            }
+          },
+          "block_order": [
+            "collection-list-0",
+            "collection-list-1",
+            "collection-list-2"
+          ],
+          "settings": {
+          }
+        },
+        "featured-collection": {
+          "type": "featured-collection",
+          "settings": {
+            "collection": "frontpage"
+          }
+        },
+        "featured-product": {
+          "type": "featured-product",
+          "settings": {
+          }
+        }
+      },
+      "content_for_index": [
+        "collection-list",
+        "featured-collection",
+        "featured-product"
+      ]
+    }
+  }
+}

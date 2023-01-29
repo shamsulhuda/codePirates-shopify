@@ -1,0 +1,60 @@
+{% assign link = main_menu.title | downcase %}
+{% assign belongs_to = block.settings.belongs_to | downcase %}
+
+{% if link == belongs_to %}
+{% case block.settings.style %}
+{% when 'style1' %}
+<div class="megamenu style1">
+  <ul class="grid mmWrapper">
+      <li class="grid__item large-up--one-whole">
+          <ul class="grid">
+            {% for menu in block.settings.menu.links %}
+              {% liquid
+                case block.settings.menu.links.size
+                when 2
+                assign column = 'col-md-6 col-lg-6'
+                when 3
+                assign column = 'col-md-4 col-lg-4'
+                when 4
+                assign column = 'col-md-3 col-lg-3'
+                else
+                assign column = 'col-md-3 col-lg-3'
+                endcase
+              %}
+              <li class="grid__item lvl-1 {{ column }}"><a href="{{ menu.url }}" class="site-nav lvl-1">{{ menu.title }}</a>
+                <ul class="subLinks">
+                  {% for sublink in menu.links %}
+                  <li class="lvl-2"><a href="{{ sublink.url }}" class="site-nav lvl-2">{{ sublink.title }}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endfor %}
+          </ul>
+      </li>
+  </ul>
+</div>
+{% when 'style2' %}
+<div class="megamenu style4">
+    <ul class="grid grid--uniform mmWrapper">
+      {% for menu in block.settings.menu.links limit:2 %}        
+        <li class="grid__item lvl-1 col-md-3 col-lg-3"><a href="{{ menu.url }}" class="site-nav lvl-1">{{ menu.title }}</a>
+          <ul class="subLinks">
+            {% for sublink in menu.links %}
+            <li class="lvl-2"><a href="{{ sublink.url }}" class="site-nav lvl-2">{{ sublink.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+        <li class="grid__item lvl-1 col-md-6 col-lg-6">
+            <a href="{{ block.settings.banner_link }}">
+              {% if block.settings.image != nil %}
+              <img src="{{ block.settings.image | img_url:'master' }}" alt="{{ block.settings.image.alt }}">
+              {% else %}
+              {{ 'lifestyle-2' | placeholder_svg_tag }}
+              {% endif %}
+            </a>
+        </li>
+    </ul>
+</div>
+{% endcase %}
+{% endif %}

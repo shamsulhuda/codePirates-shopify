@@ -1,0 +1,368 @@
+<!-- Product template-->
+<div id="page-content">
+  <!--MainContent-->
+  <div id="MainContent" class="main-content" role="main">
+      {% include 'bredcrumb' %}    
+      <div id="ProductSection-product-template" class="product-template__container prstyle1 container">
+          <!--product-single-->
+        {%- assign product_form_id = 'product-form-' | append: section.id -%}
+          <div class="product-single" id="{{ section.id }}">
+              <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                      <div class="product-details-img">
+                          <div class="product-thumb">
+                              <div id="gallery" class="product-dec-slider-2 product-tab-left">
+                                {% for image in product.images %}
+                                  <a data-image="{{ image.src | img_url:'master' }}" data-zoom-image="{{ image.src | img_url:'master' }}" class="slick-slide slick-cloned" data-slick-index="-4" aria-hidden="true" tabindex="-1">
+                                    <img class="blur-up lazyload" src="{{ image.src | img_url:'master' }}" alt="{{ image.alt | escape }}" />
+                                  </a>
+                                {% endfor %}
+                              </div>
+                          </div>
+                          <div class="zoompro-wrap product-zoom-right pl-20">
+                            <div class="zoompro-span">
+                              <img class="zoompro blur-up lazyload" data-zoom-image="{{ product.featured_image | img_url:'master' }}" alt="" src="{{ product.featured_image | img_url:'master' }}" />
+                            </div>
+                            <div class="product-labels"><span class="lbl on-sale">Sale</span><span class="lbl pr-label1">new</span></div>
+                            <div class="product-buttons">
+                              <a href="https://www.youtube.com/watch?v=93A2jOW5Mog" class="btn popup-video" title="View Video"><i class="bi bi-play-btn" aria-hidden="true"></i></a>
+                              <a href="#" class="btn prlightbox" title="Zoom"><i class="icon bi bi-arrows-move" aria-hidden="true"></i></a>
+                            </div>
+                          </div>
+                          <div class="lightboximages">
+                            {% for image in product.images %}
+                              <a href="{{ image.src | img_url:'master' }}" data-size="1462x2048"></a>
+                            {% endfor %}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                  {% for block in section.blocks %}
+                    {% case block.type %}
+                      {% when '@app' %}
+                      {% render block %}
+                      {% when 'meta' %}
+                      <div class="product-single__meta" {{ block.shopify_attributes }}>
+                        <h1 class="product-single__title">{{ product.title | escape }}</h1>                        
+                        <div class="product-nav clearfix">
+                          {% if collection.next_product %}
+                          <a href="{{ collection.next_product }}" class="next" title="Next">
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                          </a>
+                         {% endif %}                              
+                        </div>
+                        
+                        {% if block.settings.info %}
+                        <div class="prInfoRow">
+                          {%- assign current_variant = product.selected_or_first_available_variant -%}
+                          {% if current_variant.sku %}
+                          <div class="product-sku">SKU: <span class="variant-sku">{{ current_variant.sku }}</span></div>
+                          {% endif %}
+                          <div class="product-review"><a class="reviewLink" href="#tab2"><i class="font-13 fa fa-star"></i><i class="font-13 fa fa-star"></i><i class="font-13 fa fa-star"></i><i class="font-13 fa fa-star-o"></i><i class="font-13 fa fa-star-o"></i><span class="spr-badge-caption">6 reviews</span></a></div>
+                        </div>
+                        {% endif %}
+                      </div>
+                      {% when 'price' %}
+                      {% render 'price-template', product: product, save_amount:block.settings.save_amount %}
+  
+                      {% when 'short_description' %}
+                      {% if product.description != blank %}
+                      <div class="product-single__description rte" {{ block.shopify_attributes }}>
+                        {{ product.description | truncatewords:30 }}
+                      </div>
+                      {% endif %}
+                      
+                      {% when 'inventory' %}
+                      
+                      {% assign product_qty = 0 %}
+                      {% for variant in product.variants %}
+                      {% if variant.inventory_quantity > 0 %}
+                      {% assign product_qty = product_qty | plus: variant.inventory_quantity %}
+                      {% endif %}
+                      {% endfor %}
+                      {% if product_qty > 0 and product_qty <= 5 %}
+                      <div id="quantity_message">Hurry! Only  <span class="items">{{ product_qty }}</span>  left in stock.</div>
+                      {% elsif product_qty < 0 %}
+                      <div id="quantity_message">Unavailable</div>
+                      {% else %}
+                      {% endif %}
+                      
+                      {% when 'variant_picker' %} 
+                      <!-- Variant picker -->
+                      {% unless product.has_only_default_variant %}
+                      <variant-radios class="product-form my-4" {{ block.shopify_attributes }}>
+                        {%- for option in product.options_with_values -%}
+                          {% if option.name == 'Color' %}
+                          <div class="swatch clearfix swatch-0 option1" data-option-index="0">
+                            <div class="product-form__item">                                    
+                              <label class="header">{{ option.name }}: <span class="slVariant">Red</span></label>
+                                {% for value in option.values %}
+                                <div data-value="Black" class="swatch-element color black available">
+                                  <input class="swatchInput" id="swatch-{{ forloop.index }}-{{ value }}" type="radio" name="{{ option.name }}" value="{{ value }}" {% if option.selected_value == value %}checked{% endif %}>
+                                  <label class="swatchLbl color small" for="swatch-{{ forloop.index }}-{{ value }}" style="background-color:{{ value }};" title="{{ value }}"></label>
+                                </div>
+                                {% endfor %}                                    
+                            </div>
+                          </div>
+                          {% else %}
+                          <div class="swatch clearfix swatch-1 option2" data-option-index="1">
+                            <div class="product-form__item">
+                              <label class="header">{{ option.name }}: <span class="slVariant">XS</span></label>
+                              {% for value in option.values %}
+                              <div data-value="{{ value }}" class="swatch-element xs available">
+                                <input class="swatchInput" id="swatch-{{ forloop.index }}-{{ value }}" type="radio" name="{{ option.name }}" value="{{ value }}" {% if option.selected_value == value %}checked{% endif %}>
+                                <label class="swatchLbl medium rectangle" for="swatch-{{ forloop.index }}-{{ value }}" title="{{ value }}">{{ value }}</label>
+                              </div>
+                              {% endfor %}                              
+                            </div>
+                          </div>
+                          {% endif %}
+                       {% endfor %}  
+                        <script type="application/json">
+                          {{ product.variants | json }}
+                        </script>
+                      </variant-radios>
+                      {% endunless %}
+                      
+                      {% when 'size_guide' %}
+                      {% if product.tags contains 'size_guide' %}
+                      <div class="infolinks mb-4"><a href="#sizechart" class="sizelink btn"> Size Guide</a> <a href="#productInquiry" class="emaillink btn"> Ask About this Product</a></div>
+                      {% render 'size-guide' %}
+                      {% endif %}
+                      
+                      {% when 'product_form' %}
+                      {% form 'product', product, class:'product-form product-form-product-template hidedropdown', id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' %}
+                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                         <!-- Product Action -->
+                          <div class="product-action clearfix">
+                          {% if block.settings.qty_field %}
+                              <div class="product-form__item--quantity">
+                                  <div class="wrapQtyBtn">
+                                    <div class="qtyField">
+                                      <a class="qtyBtn minus" href="javascript:void(0);"><i class="bi bi-dash" aria-hidden="true"></i></a>
+                                      <input type="text" id="Quantity" name="quantity" value="1" class="product-form__input qty">
+                                      <a class="qtyBtn plus" href="javascript:void(0);"><i class="bi bi-plus" aria-hidden="true"></i></a>
+                                    </div>
+                                  </div>
+                              </div>  
+                          {% endif %}
+                              <div class="product-form__item--submit">
+                                <button type="submit" name="add" class="btn product-form__cart-submit">
+                                  <span>Add to cart</span>
+                                </button>
+                              </div>
+                          {% if block.settings.buy_now %}
+                              <div class="shopify-payment-button" data-shopify="payment-button">
+                                <button type="button" class="shopify-payment-button__button shopify-payment-button__button--branded">Buy it now</button>
+                              </div>
+                          {% endif %}
+                          </div>
+                          <!-- End Product Action -->
+                      {% endform %}
+
+                      {% when 'share' %}
+                      <div class="display-table shareRow" {{ block.shopify_attributes }}>
+                        <div class="display-table-cell medium-up--one-third">
+                            <div class="wishlist-btn">
+                                <a class="wishlist add-to-wishlist" href="#" title="Add to Wishlist"><i class="icon anm anm-heart-l" aria-hidden="true"></i> <span>Add to Wishlist</span></a>
+                            </div>
+                        </div>
+                        <div class="display-table-cell text-right">
+                            <div class="social-sharing">
+                                <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url }}" class="btn btn--small btn--secondary btn--share share-facebook" title="Share on Facebook">
+                                    <i class="bi bi-facebook" aria-hidden="true"></i> <span class="share-title" aria-hidden="true">Share</span>
+                                </a>
+                                <a target="_blank" href="https://twitter.com/intent/tweet?ref_src=twsrc%5Etfw&quot%3B%20class=&quot%3Btwitter-share-button=&quot%3B%20data-show-count=&quot%3Bfalse=&quot=&url={{ canonical_url }}" class="btn btn--small btn--secondary btn--share share-twitter" title="Tweet on Twitter">
+                                    <i class="bi bi-twitter" aria-hidden="true"></i> <span class="share-title" aria-hidden="true">Tweet</span>
+                                </a>
+                                <a target="_blank" href="http://pinterest.com/pin/create/link/?url={{ canonical_url }}&media={{ product.featured_image | img_url:'master'}}&description={{ product.title | escape }}" class="btn btn--small btn--secondary btn--share share-pinterest" title="Pin on Pinterest">
+                                    <i class="bi bi-pinterest" aria-hidden="true"></i> <span class="share-title" aria-hidden="true">Pin it</span>
+                                </a>
+                                <a href="mailto:?subject={{ product.title | escape }}&amp;body=Check out here- {{ canonical_url }}" class="btn btn--small btn--secondary btn--share share-pinterest" title="Share by Email">
+                                    <i class="bi bi-envelope" aria-hidden="true"></i> <span class="share-title" aria-hidden="true">Email</span>
+                                </a>
+                             </div>
+                        </div>
+                      </div>
+                      {% when 'sale_message' %}       
+                      <div class="userViewMsg" data-user="{{ block.settings.max_number | default: 20 }}" data-time="{{ block.settings.time_interval | times: 1000 }}">
+                        <i class="bi bi-people" aria-hidden="true"></i> <strong class="uersView">14</strong> {{ block.settings.message | escape }}
+                      </div>                  
+                      {% endcase %}
+                      {% endfor %}
+                  </div>
+              </div>
+          </div>
+          <!--End-product-single-->
+      </div>
+    <!--#ProductSection-product-template-->
+  </div>
+  <!--MainContent-->
+</div>
+
+
+{% schema %}
+  {
+    "name": "Product template",
+    "settings": [
+    ],
+    "blocks":[
+      {
+        "type": "@app"
+      },
+      {
+        "type":"meta",
+        "name": "Product meta",
+        "settings":[
+          {
+            "type": "checkbox",
+            "id": "info",
+            "label": "Show SKU & Review",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "price",
+        "name": "Price",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "save_amount",
+            "label": "Show Save amount",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "short_description",
+        "name": "Short Description",
+        "limit": 1,
+        "settings":[
+          {
+            "type": "number",
+            "id": "word_count",
+            "label": "Word excerpts",
+            "default": 30
+          }
+        ]
+      },
+      {
+        "type":"inventory",
+        "name": "Inventory",
+        "limit": 1
+      },
+      {
+        "type": "variant_picker",
+        "name": "Variant picker",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "select",
+            "id":"view_type",
+            "label":"Type",
+            "options":[
+              {
+                "label": "Button",
+                "value": "button"
+              },
+              {
+                "label": "Selector",
+                "value": "selector"
+              }
+            ],
+            "default": "button"
+          }
+        ]
+      },
+      {
+        "type": "size_guide",
+        "name": "Size guide",
+        "limit": 1,
+        "settings":[
+          {
+            "type": "paragraph",
+            "content": "<p>To show the size guide insert product tag name- 'size_guide'</p>"
+          }
+        ]
+      },
+      {
+        "type": "product_form",
+        "name": "Product form",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "qty_field",
+            "label": "Enable Quantity box",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "buy_now",
+            "label": "Enable Buy Now Button",
+            "default": true
+          }
+        ]
+      },
+      {
+        "type": "share",
+        "name": "Share",
+        "limit": 1
+      },
+      {
+        "type": "sale_message",
+        "name": "message",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "number",
+            "id":"max_number",
+            "label": "Maximum number of people",
+            "default": 20
+          },
+          {
+            "type": "number",
+            "id":"time_interval",
+            "label": "Changing interval",
+            "default": 10,
+            "info": "Input as seconds"
+          },
+          {
+            "type": "text",
+            "id": "message",
+            "label": "Message text",
+            "default": "People are looking for this product"
+          }
+        ]
+      }
+    ],
+    "default":{
+      "settings":{},
+      "blocks":[
+        {
+          "type": "meta"
+        },
+        {
+          "type": "price"
+        },
+        {
+          "type": "short_description"
+        },
+        {
+          "type": "variant_picker"
+        },
+        {
+          "type": "product_form"
+        }
+      ]
+    }
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

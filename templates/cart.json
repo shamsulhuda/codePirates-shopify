@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "cart-items": {
+      "type": "cart-items",
+      "settings": {
+      }
+    },
+    "cart-footer": {
+      "type": "cart-footer",
+      "blocks": {
+        "note": {
+          "type": "note",
+          "settings": {
+          }
+        },
+        "subtotal": {
+          "type": "subtotal",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "note",
+        "subtotal"
+      ],
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "cart-items",
+    "cart-footer"
+  ]
+}

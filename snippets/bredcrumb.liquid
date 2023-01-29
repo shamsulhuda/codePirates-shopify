@@ -1,0 +1,41 @@
+{% unless template == 'index' or template == 'cart' or template == 'list-collections' or template == '404' %}
+{% assign t = template | split: '.' | first %}
+  <div class="bredcrumbWrap">
+      <div class="container breadcrumbs">
+          <a href="/" title="Back to the home page">Home</a><span aria-hidden="true">›</span>
+        {% case t %}
+          {% when 'page' %}
+          <span>{{ page.title }}</span>
+        
+          {% when 'product' %}
+          {% if collection.url %}
+          <span>{{ collection.title | link_to: collection.url }}</span><span aria-hidden="true">›</span>
+          {% endif %}
+          <span>{{ product.title }}</span>
+
+          {% when 'collection' and collection.handle %}
+          {% if current_tags %}
+            <span>{{ collection.title | link_to: collection.url }}</span><span aria-hidden="true">›</span>
+            {% capture tag_url %}{{ collection.url }}/{{ current_tags | join: "+"}}{% endcapture %}
+            <a href="{{ tag_url }}" aria-current="page">{{ current_tags | join: " + "}}</a>
+          {% else %}
+            <span>{{ collection.title }}</span>
+          {% endif %}
+
+          {% when 'blog' %}
+          {% if current_tags %}
+            <span>{{ blog.title | link_to: blog.url }}</span><span aria-hidden="true">›</span>
+            {% capture tag_url %}{{blog.url}}/tagged/{{ current_tags | join: "+" }}{% endcapture %}
+            <a href="{{ tag_url }}" aria-current="page">{{ current_tags | join: " + " }}</a>
+          {% else %}
+            <span>{{ blog.title }}</span>
+          {% endif %}
+    
+          {% when 'article' %}
+          <span>{{ blog.title | link_to: blog.url }}</span><span aria-hidden="true">›</span>
+          <span>{{ article.title }}</span>
+
+        {% endcase %}
+      </div>
+  </div>
+{% endunless %}

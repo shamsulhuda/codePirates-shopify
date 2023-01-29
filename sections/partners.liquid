@@ -1,0 +1,78 @@
+<!--Logo Slider-->
+<div class="section logo-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+        {% if section.settings.title != blank %}
+        <div class="section-header text-center">
+            <h2 class="h2">            
+            {{ section.settings.title }}
+            </h2>
+            {{ section.settings.subtext }}
+        </div>
+        {% endif %}
+        <div class="logo-bar">
+          {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+          <div class="logo-bar__item">
+            {% if block.settings.logo != nil %}
+            <img src="{{ block.settings.logo | img_url }}" alt="{{ block.settings.logo.alt }}" title="partner logo" />
+            {% else %}
+            {{ 'product-1' | placeholder_svg_tag }}
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% else %}
+          {% for i in (1..5) %}
+          <div class="logo-bar__item">
+            {{ 'product-1' | placeholder_svg_tag }}
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End Logo Slider-->
+{% schema %}
+  {
+    "name": "Partners",
+    "settings": [
+      {
+       "type": "text",
+       "id": "title",
+       "label": "Title"
+     },
+     {
+       "type": "richtext",
+       "id": "subtext",
+       "label": "Sub-text"
+     }
+    ],
+    "blocks":[
+      {
+        "type":"logo",
+        "name": "Logo",
+        "settings":[
+          {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo"
+          }
+        ]
+      }
+    ],
+    "presets":[
+      {
+        "name": "Partners"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

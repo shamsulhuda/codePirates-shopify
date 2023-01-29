@@ -1,0 +1,47 @@
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign available = target.available | default: false
+
+ comment
+   Currency format
+ endcomment 
+   
+  if settings.currency_code_enable
+  assign money_price = price | money_with_currency
+  else
+  assign money_price = price | money
+  endif
+   
+  if target == product and product.price_varies
+    assign money_price = money_price | prepend: 'From '
+  endif
+   
+-%}
+
+<p class="product-single__price product-single__price-product-template">
+  <span class="visually-hidden">Regular price</span>
+  <s id="ComparePrice-product-template"><span class="money">{{ compare_at_price | money }}</span></s>
+  <span class="product-price__price product-price__price-product-template product-price__sale product-price__sale--single">
+    <span id="ProductPrice-product-template"><span class="money">{{ money_price }}</span></span>
+  </span>
+
+  {% if product.compare_at_price_max > product.price and save_amount %}
+  {% assign saving_percent =  product.compare_at_price_max | minus: product.price | times: 100.0 | divided_by: product.compare_at_price_max | money_without_currency | times: 100 | remove: '.0' | append: '%' %} 
+  {% assign saving_price = product.compare_at_price_max | minus: product.price| money %} 
+  <span class="discount-badge">
+      <span class="devider">|</span>&nbsp;
+      <span>You Save</span>
+      <span id="SaveAmount-product-template" class="product-single__save-amount">
+      <span class="money">{{ saving_price }}</span>
+      </span>
+      <span class="off">({{ saving_percent }})</span>
+  </span>
+  {% endif %}
+</p>
