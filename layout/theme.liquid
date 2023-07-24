@@ -1,0 +1,42 @@
+<!doctype html>
+<html class="no-js supports-no-cookies" lang="{{ shop.locale }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <link href="{{ 'bootstrap.min.css' | asset_url }}" rel="stylesheet">
+    <title>
+      {% if template.name == 'index' %}
+        {{ shop.name }}
+      {% else %}
+        {{ page.title | escape }}
+      {% endif %}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+    {{ content_for_header }}
+  </head>
+
+  <body id="{{ page_title | handle }}" class="template-{{ template.name | handle }}">
+
+    <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+    <!-- Header start -->
+    {% section 'header' %}
+    <!-- Header end -->
+    <main role="main" id="MainContent">
+      {{ content_for_layout }}
+    </main>
+    <!-- Footer start -->
+    {% section 'footer' %}
+    <!-- Footer end -->
+    <script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer></script>
+
+  </body>
+</html>

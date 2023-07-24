@@ -1,0 +1,23 @@
+<div class="col-md-3 my-2">
+  <div class="card">
+    <div class="card-body">
+      <a href="{{ product.url }}">
+        {% if product.featured_image != blank %}
+          <img
+            src="{{ product.featured_image | img_url:'medium' }}"
+            width="100%"
+            alt="{{ product.title }}">
+        {% else %}
+          {{ 'image' | placeholder_svg_tag }}
+        {% endif %}
+      </a>
+    </div>
+    <div class="card-footer">
+      {% render 'price', product: product %}
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </div>
+    <div class="action">
+      <a href="{{ product.url }}" class="btn btn-primary w-100">View Details</a>
+    </div>
+  </div>
+</div>

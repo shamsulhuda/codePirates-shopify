@@ -1,0 +1,79 @@
+{% liquid
+  assign logo = section.settings.logo
+  assign menu = section.settings.menu
+  assign enable_search = section.settings.enable_search_box
+%}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    {% if logo != null %}      
+      <img src="{{ logo | img_url:width:200 }}" alt="{{ shop.name }}">
+    {% else %}
+      <a class="navbar-brand" href="#">{{ shop.name }}</a>
+    {% endif %}
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% for link in menu.links %}
+        <li class="nav-item {% if link.links.size > 0 %}dropdown{% endif %}">
+          <a class="nav-link {% if link.links.size > 0 %}dropdown-toggle{% endif %}" href="{{ link.url }}" {% if link.links.size > 0 %} id="navbarDropdown_{{ forloop.index }}" role="button" data-bs-toggle="dropdown" aria-expanded="false"{% endif %}>
+          {{ link.title }}
+          </a>
+          {% if link.links.size > 0 %}
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for dropLink in link.links %}
+            <li><a class="dropdown-item" href="{{ dropLink.url }}">{{ dropLink.title }}</a></li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% if enable_search %}
+      <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Select logo",
+      "info": "Recommended size: 200x200px"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    },
+    {
+      "type": "header",
+      "content": "Search bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search_box",
+      "label": "Enable search bar",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
