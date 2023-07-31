@@ -1,0 +1,199 @@
+<div class="container mt-5 mb-5">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="images p-3">
+              <div class="text-center p-4">
+                <img
+                  id="main-image"
+                  src="{{ product.featured_image | img_url:'original' }}"
+                  width="100%">
+              </div>
+              {% if product.images.size > 1 %}
+                <div class="thumbnail text-center">
+                  {% for image in product.images %}
+                    <img
+                      onclick="change_image(this)"
+                      src="{{ image.src | img_url:'original' }}"
+                      width="70">
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="product p-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <i class="fa fa-long-arrow-left"></i>
+                  <span class="ml-1">Back</span>
+                </div>
+              </div>
+              {% for block in section.blocks %}
+                {% case block.type %}
+                  {% when 'vendor' %}
+                  <div class="mt-4 mb-3">
+                    <span class="text-uppercase text-muted brand">{{ product.vendor }}</span>
+                  </div>
+                  {% when 'title' %}
+                  <h5 class="text-uppercase">{{ product.title | escape }}</h5>
+
+                  {% when 'price' %}
+                  <div class="price d-flex flex-row align-items-center">
+                    {% render 'price', product: product %}
+                  </div>
+                  {% when 'description' %}
+                  <p class="product-description">
+                    {{ product.description }}
+                  </p>
+                  {% when 'liquid' %}
+                  {{ block.settings.liquid }}
+                  {% when 'variants' %}
+                  <div class="product-variants mt-5">
+                    <div class="sizes">
+                      <h6 class="text-uppercase">Size</h6>
+                      <label class="radio">
+                        <input
+                          type="radio"
+                          name="size"
+                          value="S"
+                          checked>
+                        <span>S</span>
+                      </label>
+                      <label class="radio">
+                        <input
+                          type="radio"
+                          name="size"
+                          value="M">
+                        <span>M</span>
+                      </label>
+                      <label class="radio">
+                        <input
+                          type="radio"
+                          name="size"
+                          value="L">
+                        <span>L</span>
+                      </label>
+                      <label class="radio">
+                        <input
+                          type="radio"
+                          name="size"
+                          value="XL">
+                        <span>XL</span>
+                      </label>
+                      <label class="radio">
+                        <input
+                          type="radio"
+                          name="size"
+                          value="XXL">
+                        <span>XXL</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {% when 'quantity' %}
+                  <div class="quantity-selectior mt-4">
+                    <input
+                      type="number"
+                      class="form-control"
+                      name="quantity"
+                      value="1"
+                      min="1">
+                  </div>
+
+                  {% when 'add_to_cart_btn' %}
+                  <div class="cart mt-4 align-items-center">
+                    <button class="btn btn-default text-uppercase mr-2 px-4 add_to_cart">Add to cart</button>
+                    <i class="fa fa-heart text-muted"></i>
+                    <i class="fa fa-share-alt text-muted"></i>
+                  </div>
+                {% endcase %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function change_image(image) {
+    var main_image = document.getElementById("main-image");
+    main_image.src = image.src;
+  }
+  document.addEventListener("DOMContentLoaded", function(event) {});
+</script>
+
+{% schema %}
+  {
+    "name": "Product Template",
+    "settings": [],
+    "blocks": [
+      {
+        "type": "title",
+        "name": "Tittle",
+        "limit": 1
+      },
+      {
+        "type": "vendor",
+        "name": "Vendor",
+        "limit": 1
+      },
+      {
+        "type": "price",
+        "name": "Price",
+        "limit": 1
+      },
+      {
+        "type": "description",
+        "name": "Description",
+        "limit": 1
+      }, {
+        "type": "quntity",
+        "name": "Quantity Selector",
+        "limit": 1
+      }, {
+        "type": "variants",
+        "name": "Variants picker",
+        "limit": 1
+      }, {
+        "type": "add_to_cart_btn",
+        "name": "Add to Cart Button",
+        "limit": 1
+      }, {
+        "type": "liquid",
+        "name": "Liquid code",
+        "settings": [
+          {
+            "type": "liquid",
+            "id": "liquid",
+            "label": "Liquid code"
+          }
+        ]
+      }
+    ],
+    "default": {
+      "blocks": [
+        {
+          "type": "title"
+        },
+        {
+          "type": "price"
+        },
+        {
+          "type": "description"
+        },
+        {
+          "type": "variants"
+        }, {
+          "type": "quntity"
+        }, {
+          "type": "add_to_cart_btn"
+        }
+      ]
+    }
+  }
+{% endschema %}
