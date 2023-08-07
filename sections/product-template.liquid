@@ -1,3 +1,4 @@
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
 <div class="container mt-5 mb-5">
   <div class="row d-flex justify-content-center">
     <div class="col-md-10">
@@ -31,86 +32,124 @@
                   <span class="ml-1">Back</span>
                 </div>
               </div>
-              {% for block in section.blocks %}
-                {% case block.type %}
-                  {% when 'vendor' %}
-                  <div class="mt-4 mb-3">
-                    <span class="text-uppercase text-muted brand">{{ product.vendor }}</span>
-                  </div>
-                  {% when 'title' %}
-                  <h5 class="text-uppercase">{{ product.title | escape }}</h5>
-
-                  {% when 'price' %}
-                  <div class="price d-flex flex-row align-items-center">
-                    {% render 'price', product: product %}
-                  </div>
-                  {% when 'description' %}
-                  <p class="product-description">
-                    {{ product.description }}
-                  </p>
-                  {% when 'liquid' %}
-                  {{ block.settings.liquid }}
-                  {% when 'variants' %}
-                  <div class="product-variants mt-5">
-                    <div class="sizes">
-                      <h6 class="text-uppercase">Size</h6>
-                      <label class="radio">
-                        <input
-                          type="radio"
-                          name="size"
-                          value="S"
-                          checked>
-                        <span>S</span>
-                      </label>
-                      <label class="radio">
-                        <input
-                          type="radio"
-                          name="size"
-                          value="M">
-                        <span>M</span>
-                      </label>
-                      <label class="radio">
-                        <input
-                          type="radio"
-                          name="size"
-                          value="L">
-                        <span>L</span>
-                      </label>
-                      <label class="radio">
-                        <input
-                          type="radio"
-                          name="size"
-                          value="XL">
-                        <span>XL</span>
-                      </label>
-                      <label class="radio">
-                        <input
-                          type="radio"
-                          name="size"
-                          value="XXL">
-                        <span>XXL</span>
-                      </label>
+              {%- form 'product', product, id: product_form_id -%}
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ product.selected_or_first_available_variant.id }}">
+                {% for block in section.blocks %}
+                  {% case block.type %}
+                    {% when 'vendor' %}
+                    <div class="mt-4 mb-3">
+                      <span class="text-uppercase text-muted brand">{{ product.vendor }}</span>
                     </div>
-                  </div>
+                    {% when 'title' %}
+                    <h5 class="text-uppercase">{{ product.title | escape }}</h5>
 
-                  {% when 'quantity' %}
-                  <div class="quantity-selectior mt-4">
-                    <input
-                      type="number"
-                      class="form-control"
-                      name="quantity"
-                      value="1"
-                      min="1">
-                  </div>
+                    {% when 'price' %}
+                    <div class="price d-flex flex-row align-items-center">
+                      {% render 'price', product: product %}
+                    </div>
+                    {% when 'description' %}
+                    <p class="product-description">
+                      {{ product.description }}
+                    </p>
+                    {% when 'liquid' %}
+                    {{ block.settings.liquid }}
+                    {% when 'variants' %}
+                    {% unless product.has_only_default_variant %}
+                      <div class="product-variants mt-5" id="product-variants">
+                        {% for option in product.options_with_values %}
+                          {% liquid
+                              assign variants_available_arr = product.variants | map: 'available'
+                              assign variants_option1_arr = product.variants | map: 'option1'
+                              assign variants_option2_arr = product.variants | map: 'option2'
+                              assign variants_option3_arr = product.variants | map: 'option3'
+                            %}
+                          <div class="option {{ option.name | downcase }} mt-3">
+                            <h6 class="text-uppercase">{{ option.name }}</h6>
+                            {% for value in option.values %}
+                              {% liquid
+                                  assign option_disabled = true
 
-                  {% when 'add_to_cart_btn' %}
-                  <div class="cart mt-4 align-items-center">
-                    <button class="btn btn-default text-uppercase mr-2 px-4 add_to_cart">Add to cart</button>
-                    <i class="fa fa-heart text-muted"></i>
-                    <i class="fa fa-share-alt text-muted"></i>
-                  </div>
-                {% endcase %}
-              {% endfor %}
+                                  for option1_name in variants_option1_arr
+                                    case option.position
+                                      when 1
+                                        if variants_option1_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                                          assign option_disabled = false
+                                        endif
+                                      when 2
+                                        if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                                          assign option_disabled = false
+                                        endif
+                                      when 3
+                                        if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == product.selected_or_first_available_variant.option2 and variants_option3_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                                          assign option_disabled = false
+                                        endif
+                                    endcase
+                                  endfor
+                                %}
+                              <label class="radio">
+                                <input
+                                  type="radio"
+                                  name="{{- option.name | handleize -}}"
+                                  value="{{- value | handleize | escape -}}"
+                                  {% if option.selected_value == value %}
+                                  checked
+                                  {% endif %}
+                                  {% if option_disabled %}
+                                  disabled
+                                  {% endif %}>
+                                <span
+                                  {% if option_disabled %}
+                                  title="unavailable"
+                                  {% endif %}>
+                                  {{ value | escape }}
+                                </span>
+                              </label>
+                            {% endfor %}
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <select
+                        name="id"
+                        id="variant_selector"
+                        class="d-none">
+                        {% for variant in product.variants %}
+                          <option
+                            value="{{ variant.id }}"
+                            data-name="{{ variant.title | handleize | escape }}"
+                            {%- if variant == current_variant %}
+                            selected
+                            {%- endif -%}
+                            {%- if variant.available == false %}
+                            data-sold="true"
+                            {% endif %}>{{ variant.title | escape }}</option>
+                        {% endfor %}
+                      </select>
+                    {% endunless %}
+                    {% when 'quantity' %}
+                    <div class="quantity-selectior mt-4">
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="quantity"
+                        value="1"
+                        min="1">
+                    </div>
+                    {% when 'add_to_cart_btn' %}
+                    <div class="cart mt-4 align-items-center">
+                      <button
+                        type="submit"
+                        name="add"
+                        class="btn btn-default text-uppercase mr-2 px-4 add_to_cart"
+                        id="add-to-cart-button">Add to cart</button>
+                      <i class="fa fa-heart text-muted"></i>
+                      <i class="fa fa-share-alt text-muted"></i>
+                    </div>
+                  {% endcase %}
+                {% endfor %}
+              {% endform %}
             </div>
           </div>
         </div>
@@ -124,7 +163,49 @@
     var main_image = document.getElementById("main-image");
     main_image.src = image.src;
   }
-  document.addEventListener("DOMContentLoaded", function(event) {});
+  window.addEventListener('DOMContentLoaded', async () => {
+    const product_url = '{{ product.url }}';
+    const variantSelector = async () => {
+      const options = document.querySelectorAll('#product-variants .option');
+      let option_value = [];
+      options.forEach(elm => {
+        let selected = elm.querySelector('input:checked').value
+        option_value.push(selected);
+      })
+      option_value = option_value.join('-');
+      console.log(option_value);
+
+      const selOptions = document.querySelectorAll('#variant_selector option');
+      selOptions.forEach(elm => {
+        const name = elm.dataset.name;
+        const sold = elm.dataset.sold;
+        elm.removeAttribute('selected');
+        if (name == option_value) {
+          const btn = document.querySelector('[name="add"]');
+          if (sold) {
+            btn.setAttribute('disabled', 'true');
+            btn.innerText = 'Sold Out';
+          } else {
+            elm.setAttribute('selected', 'true');
+            btn.removeAttribute('disabled');
+            btn.innerText = 'Add To Cart'
+          }
+        }
+      })
+    }
+    await variantSelector();
+    const optionSelectors = document.querySelectorAll('#product-variants label.radio');
+    optionSelectors.forEach((elm) => {
+      elm.addEventListener('click', () => {
+        variantSelector().then(() => {
+          let variantId = document.querySelector('#variant_selector');
+          variantId = variantId.value;
+          let url = `${product_url}?variant=${variantId}`;
+          window.history.replaceState({}, '', url);
+        })
+      })
+    })
+  })
 </script>
 
 {% schema %}

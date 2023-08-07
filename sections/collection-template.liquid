@@ -42,56 +42,66 @@
                   <option
                     value="{{ option.value }}"
                     {% if option.value == collection.sort_by %}
-                    selected
-                    {% endif %}></option>
-                {{ option.name }}
-              </option>
-            {% endfor %}
-          </select>
+                      selected
+                    {% endif %}
+                  >
+                    {{ option.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="filter-heading">
+        <p>Total products: ({{ collection.all_products_count }})</p>
+      </div>
+      <div class="collection-products my-3">
+        {% paginate collection.products by product_limit -%}
+          <div class="row">
+            {% for product in collection.products %}
+              {%- render 'product-card',
+                product: product,
+                column: column_desk,
+                show_second_img: show_second_img,
+                show_vendor: show_vendor
+              -%}
+            {% endfor %}
+          </div>
+
+          <div class="pagination justify-content-center mt-5">
+            {% render 'pagination', paginate: paginate %}
+          </div>
+        {% endpaginate %}
       </div>
     </div>
   </div>
-  <div class="filter-heading">
-    <p>Total products: ({{ collection.all_products_count }})</p>
-  </div>
-  <div class="collection-products my-3">
-    {% paginate collection.products by product_limit -%}
-      <div class="row">
-        {% for product in collection.products %}
-          {%- render 'product-card'
-            , product: product,
-            column: column_desk,
-            show_second_img: show_second_img,
-            show_vendor: show_vendor -%}
-        {% endfor %}
-      </div>
+</div>
 
-      <div class="pagination justify-content-center mt-5">
-        {% render 'pagination', paginate: paginate %}
-      </div>
-    {% endpaginate %}
-  </div>
-</div></div></div><script>Shopify.queryParams = {};
-if (location.search.length) {
-  for (let keyValue, i = 0, queries = location.search.substr(1).split('&'); i < queries.length; i++) {
-    keyValue = queries[i].split('=');
-    if (keyValue.length > 1) {
-      Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+<script>
+  Shopify.queryParams = {};
+  if(location.search.length){
+    for(let keyValue, i=0, queries = location.search.substr(1).split('&'); i < queries.length; i++){
+      keyValue = queries[i].split('=');
+      if(keyValue.length > 1){
+        Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+      }
     }
   }
-}
 
-document.querySelector('.sort-by').addEventListener('change', function(e) {
-  let value = e.currentTarget.value;
-  Shopify.queryParams.sort_by = value;
-  location.search = new URLSearchParams(Shopify.queryParams).toString();
-});
-</script>{% schema %}{
+  document.querySelector('.sort-by').addEventListener('change', function(e) {
+    let value = e.currentTarget.value;
+    Shopify.queryParams.sort_by = value;
+    location.search = new URLSearchParams(Shopify.queryParams).toString();
+  });
+</script>
+
+{% schema %}
+{
   "name": "Collection template",
   "settings": [
     {
-      "type": "header",
+      "type":"header",
       "content": "product settings"
     },
     {
@@ -115,17 +125,20 @@ document.querySelector('.sort-by').addEventListener('change', function(e) {
     {
       "type": "header",
       "content": "Product Card"
-    }, {
+    },
+    {
       "type": "checkbox",
       "id": "show_second_img",
       "label": "Show second image on hover",
       "default": false
-    }, {
+    },
+    {
       "type": "checkbox",
       "id": "show_vendor",
       "label": "Show vendor",
       "default": false
-    }, {
+    },
+    {
       "type": "checkbox",
       "id": "enable_filtering",
       "label": "Enable Filtering",
@@ -134,3 +147,4 @@ document.querySelector('.sort-by').addEventListener('change', function(e) {
   ]
 }
 {% endschema %}
+

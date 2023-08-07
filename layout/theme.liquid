@@ -19,6 +19,10 @@
       <meta name="description" content="{{ page_description | escape }}">
     {%- endif -%}
 
+    <!-- jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+
     {{ 'theme.css' | asset_url | stylesheet_tag }}
 
     {{ content_for_header }}

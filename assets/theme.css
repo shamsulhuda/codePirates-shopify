@@ -1,90 +1,96 @@
 .carousel-item:before {
-  position: absolute;
-  content: "";
-  background-color: #00000073;
-  width: 100%;
-  height: 100%;
+    position: absolute;
+    content: "";
+    background-color: #00000073;
+    width: 100%;
+    height: 100%;
 }
-.featured-product-section {
+.featured-product-section{
   margin-top: 100px;
   margin-bottom: 50px;
 }
 
+
 .product-card .card-body .second-img {
-  display: none;
+    display: none;
 }
 .product-card:hover img.featured-img {
-  display: none;
+    display: none;
 }
-.product-card:hover img.second-img {
+.product-card:hover img.second-img{
   display: block;
 }
-.product-card .vendor {
+.product-card .vendor{
   font-size: 12px;
 }
-.footer ul li a {
+.footer ul li a{
   text-decoration: none;
   color: #000000;
 }
 span.compare-price {
-  text-decoration: line-through;
-  color: #8b8b8b;
+    text-decoration: line-through;
+    color: #8b8b8b;
 }
 
 /* Product template */
 
-.card {
-  border: none;
+.card{
+  border:none
 }
-.product {
-  background-color: #eee;
+.product{
+  background-color: #eee
 }
-.brand {
-  font-size: 13px;
+.brand{
+  font-size: 13px
 }
-.act-price {
-  color: red;
-  font-weight: 700;
+.act-price{
+  color:red;
+  font-weight: 700
 }
-.dis-price {
-  text-decoration: line-through;
+.dis-price{
+  text-decoration: line-through
 }
-.product-description {
-  font-size: 14px;
+.product-description{
+  font-size: 14px
 }
-.product-variants label.radio {
-  cursor: pointer;
+.product-variants label.radio{
+  cursor: pointer
 }
-.product-variants label.radio input {
+.product-variants label.radio input{
   position: absolute;
   top: 0;
   left: 0;
   visibility: hidden;
-  pointer-events: none;
+  pointer-events: none
 }
-.product-variants label.radio span {
-  padding: 2px 9px;
+.product-variants label.radio span{
+  padding: 7px 12px;
+  font-size: 12px;
   border: 1px solid #5c5c5c;
   display: inline-block;
   color: #000000;
   border-radius: 0px;
-  text-transform: uppercase;
+  text-transform: uppercase
 }
-.product-variants label.radio input:checked + span {
+.product-variants label.radio input:checked+span{
   border-color: #5c5c5c;
   background-color: #000000;
   color: #ffffff;
 }
-.add_to_cart {
-  background-color: #ffffff !important;
+.product-variants label.radio input:disabled+span {
+    opacity: .6;
+    cursor: default;
+}
+.add_to_cart{
+  background-color: #FFFFFF !important;
   border-color: #000000 !important;
   border-radius: 0;
 }
-.add_to_cart:hover {
+.add_to_cart:hover{
   background-color: #000000 !important;
   border-color: #dddddd !important;
-  color: #ffffff;
+  color: #FFFFFF;
 }
-.add_to_cart:focus {
-  box-shadow: none;
+.add_to_cart:focus{
+  box-shadow: none
 }

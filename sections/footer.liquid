@@ -1,5 +1,158 @@
-<footer>
-  <div class="footer text-center">
-    <p>All rights reserved</p>
+{% liquid
+  case section.blocks.size
+    when 1
+      assign column = 'col-lg-12 col-md-12 col-sm-12'
+    when 2
+      assign column = 'col-lg-6 col-md-6 col-sm-12'
+    when 3
+      assign column = 'col-lg-4 col-md-4 col-sm-6'
+    when 4
+      assign column = 'col-lg-3 col-md-3 col-sm-6'
+    else
+      assign column = 'col-12'
+  endcase
+%}
+
+{% style %}
+#footer_{{ section.id }} .footer{
+  background-color: {{ section.settings.bg_color}};
+}
+{% endstyle %}
+
+<footer class="footer-section" id="footer_{{ section.id }}">
+  <div class="footer py-5">
+    <div class="container">
+      <div class="row">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'footer_menu' %}
+              <div class="{{ column }}">
+                <h4>{{ block.settings.title }}</h4>
+                <div class="footer-links">
+                  <ul class="list-group">
+                    {% for link in block.settings.menu.links %}
+                      <li class="list-group-item" style="border: none">
+                        <a href="{{ link.url }}" class="link">{{ link.title | escape }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% when 'info' %}
+              <div class="{{ column }}">
+                <h4>{{ block.settings.info_title }}</h4>
+                <div class="footer-info">
+                  {{ block.settings.rte }}
+                </div>
+              </div>
+            {% when 'image' %}
+              <div class="{{ column }}">
+                {% if block.settings.url != blank %}
+                  <a href="{{ block.settings.url }}">
+                {% endif %}
+                <img src="{{ block.settings.image | img_url:'medium' }}" width="100%" alt="footer image">
+                {% if block.settings.url != blank %}
+                  </a>
+                {% endif %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
   </div>
+  {% if section.settings.btm_footer_text != blank %}
+    <hr>
+    <div class="py-2 text-center">
+      {{ section.settings.btm_footer_text }}
+    </div>
+  {% endif %}
 </footer>
+
+{% schema %}
+{
+  "name":"Footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Footer Settings"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Bottom text"
+    },
+    {
+      "type": "richtext",
+      "id": "btm_footer_text",
+      "label": "Footer bottom text",
+      "default": "<p>All rights reserved</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "footer_menu",
+      "name": "Footer Menu",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Manu Title",
+          "default": "Manu title"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Footer menu"
+        }
+      ]
+    },
+    {
+      "type": "info",
+      "name": "Info",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "info_title",
+          "label": "Info title",
+          "default": "Menu title"
+        },
+        {
+          "type": "richtext",
+          "id": "rte",
+          "label": "Info"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "category": "Footer"
+    }
+  ]
+}
+{% endschema %}

@@ -2,28 +2,20 @@
   <div class="card product-card">
     <div class="card-body">
       <a href="{{ product.url }}">
-        {% if product.featured_image != blank %}
-          <img
-            src="{{ product.featured_image | img_url:'medium' }}"
-            width="100%"
-            class="card-img{%- if product.images.size > 1 and show_second_img %} featured-img{% endif %}"
-            alt="{{ product.title }}">
+        {% if product.featured_image != blank %}         
+          <img src="{{ product.featured_image | img_url:'medium' }}" width="100%" class="card-img{%- if product.images.size > 1 and show_second_img %} featured-img{% endif %}" alt="{{ product.title }}">
           {% if product.images.size > 1 and show_second_img %}
-            <img
-              src="{{ product.images[1] | img_url:'medium' }}"
-              width="100%"
-              class="second-img"
-              alt="{{ product.title }}">
-          {% endif %}
+            <img src="{{ product.images[1] | img_url:'medium' }}" width="100%" class="second-img" alt="{{ product.title }}">
+          {% endif %}        
         {% else %}
           {{ 'image' | placeholder_svg_tag }}
         {% endif %}
       </a>
     </div>
     <div class="card-footer">
-      {% render 'price', product: product %}
+      {% render 'price', product:product %}
       {% if show_vendor %}
-        <p class="text-uppercase vendor">{{ product.vendor }}</p>
+      <p class="text-uppercase vendor">{{ product.vendor }}</p>
       {% endif %}
       <a href="{{ product.url }}">{{ product.title }}</a>
     </div>
