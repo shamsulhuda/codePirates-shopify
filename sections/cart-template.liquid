@@ -1,128 +1,132 @@
- <!--Body Content-->
-<div id="page-content">
-    <!--Page Title-->
-    <div class="page section-header text-center">
-        <div class="page-title">
-            <div class="wrapper"><h1 class="page-width">Your cart</h1></div>
-        </div>
+<div class="cart-page" id="{{ section.id }}">
+  <div class="cart-heading bg-dark p-4 mb-4">
+    <div class="header d-flex align-items-center justify-content-center">
+      <h3 class="text-light">Your Cart</h3>
     </div>
-    <!--End Page Title-->
-    
-    <div class="container" id="mainCartSection">
-      {% if cart.item_count >  0 %}
-        <div class="row" id="main-cart-section" data-id="{{ section.id }}">
-            <div class="col-12 col-sm-12 col-md-8 col-lg-8 main-col">
-                <form action="/cart" method="post" class="cart style2">
-                    <table>
-                        <thead class="cart__row cart__header">
-                            <tr>
-                                <th colspan="2" class="text-center">Product</th>
-                                <th class="text-center">Price</th>
-                                <th class="text-center">Quantity</th>
-                                <th class="text-right">Total</th>
-                                <th class="action">&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          {% for item in cart.items %}
-                            <tr class="cart__row border-bottom line1 cart-flex border-top">
-                                <td class="cart__image-wrapper cart-flex-item">
-                                    <a href="{{ item.url }}"><img class="cart__image" src="{{ item.image | img_url:'small' }}" alt="{{ item.title }}"></a>
-                                </td>
-                                <td class="cart__meta small--text-left cart-flex-item">
-                                    <div class="list-view-item__title">
-                                        <a href="{{ item.url }}">{{ item.title }}</a>
-                                    </div>
-                                    {% unless item.product.has_only_default_variant %}
-                                    <div class="cart__meta-text">
-                                        {% for option in item.options_with_values %}
-                                          {{ option.name }}: {{ option.value }} <br>
-                                        {% endfor %}
-                                    </div>
-                                    {% endunless %}
-                                </td>
-                                <td class="cart__price-wrapper cart-flex-item">
-                                    <span class="money">{{ item.price | money }}</span>
-                                </td>
-                                <td class="cart__update-wrapper cart-flex-item text-right">
-                                    <div class="cart__qty text-center">
-                                        <div class="qtyField">
-                                            <a class="qtyBtn qtyCartBtn minus" href="javascript:void(0);"><i class="bi bi-dash"></i></a>
-                                            <input class="cart__qty-input qty" type="text" name="updates[]" id="qty" value="{{ item.quantity }}" data-variant="{{ item.variant_id }}" pattern="[0-9]*">
-                                            <a class="qtyBtn qtyCartBtn plus" href="javascript:void(0);"><i class="bi bi-plus"></i></a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-right small--hide cart-price">
-                                    <div><span class="money">{{ item.final_line_price | money }}</span></div>
-                                </td>
-                                <td class="text-center small--hide"><a href="/cart/change?line={{ forloop.index }}&quantity=0" class="btn btn--secondary cart__remove" title="Remove tem"><i class="icon bi bi-x"></i></a></td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-left"><a href="#" class="btn--link cart-continue"><i class="icon icon-arrow-circle-left"></i> Continue shopping</a></td>
-                                <td colspan="3" class="text-right"><button type="submit" name="update[]" class="btn--link cart-update"><i class="fa fa-refresh"></i> Update</button></td>
-                            </tr>
-                        </tfoot>
-                </table>
-                
-                <div class="currencymsg">We processes all orders in USD. While the content of your cart is currently displayed in USD, the checkout will use USD at the most current exchange rate.</div>
-                
-                </form>                   
+  </div>
+  <div class="container">
+    {% unless cart.empty? %}
+      <form action="{{ routes.cart_url }}" method="post" id="cart">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="cart-table">
+              <table class="table table-responsive">
+                <thead>
+                  <tr>
+                    <th>Product info</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Final price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for line_item in cart.items %}
+                    <tr>
+                      <td>
+                        <div class="item-content d-flex">
+                          <div class="item-image px-2">
+                            {% if line_item.image != empty %}
+                              <img src="{{ line_item.image | image_url:width:300 }}" width="100" height="auto">
+                            {% endif %}
+                          </div>
+                          <div class="content">
+                            <p class="title mb-1">{{ line_item.product.title | link_to: line_item.url }}</p>
+                            <div class="price">
+                              <span>Price: {{ line_item.original_price | money }}</span>
+                            </div>
+                            {% if line_item.product.has_only_default_variant == false
+                              or line_item.properties.size != 0
+                              or line_item.selling_plan_allocation != null
+                            %}
+                              {% if line_item.product.has_only_default_variant == false %}
+                                <div class="item-options">
+                                  {% for option in line_item.options_with_values %}
+                                    <span>{{ option.name | escape }}: {{ option.value }}</span> <br>
+                                  {% endfor %}
+                                </div>
+                              {% endif %}
+                              {% if line_item.selling_plan_allocation != null %}
+                                <div class="selling-plan">
+                                  <span>Selling plan: {{ line_item.selling_plan_allocation.selling_plan.name }}</span>
+                                </div>
+                              {% endif %}
+                            {% endif %}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="price-wrapper">
+                          {% if line_item.original_price != line_item.final_price %}
+                            <del>{{ line_item.original_price | money }}</del><br>
+                            <span class="sale-price">{{ line_item.final_price | money }}</span>
+                          {% else %}
+                            <span class="original-price">{{ line_item.original_price | money }}</span>
+                          {% endif %}
+                        </div>
+                      </td>
+                      <td>
+                        <div class="quantity-area">
+                          <div class="input-group mb-3" style="width: 150px">
+                            <div class="input-group-prepend">
+                              <a href="/cart/change?line={{ forloop.index }}&quantity={{ line_item.quantity | minus: 1 }}" class="nav-link input-group-text">-</a>
+                            </div>
+                            <input type="number" class="form-control" name="updates[]" value="{{ line_item.quantity }}">
+                            <div class="input-group-append">
+                              <a href="/cart/change?line={{ forloop.index }}&quantity={{ line_item.quantity | plus: 1 }}" class="nav-link input-group-text">+</a>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="final-price-wrapper">
+                          {% if line_item.original_line_price != line_item.final_line_price %}
+                            <del>{{ line_item.original_line_price | money }}</del><br>
+                            <span class="final-sale-price">{{ line_item.final_line_price | money }}</span>
+                          {% else %}
+                            <span class="final-original-price">{{ line_item.original_line_price | money }}</span>
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-            <div class="col-12 col-sm-12 col-md-4 col-lg-4 cart__footer">
-                <div class="cart-note">
-                    <div class="solid-border">
-                        <h5><label for="CartSpecialInstructions" class="cart-note__label small--text-center">Add a note to your order</label></h5>
-                        <textarea name="note" id="CartSpecialInstructions" class="cart-note__input"></textarea>
-                    </div>
-                </div>
-                <div class="solid-border">
-                  <div class="row">
-                    <span class="col-12 col-sm-6 cart__subtotal-title"><strong>Subtotal</strong></span>
-                    <span class="col-12 col-sm-6 cart__subtotal-title cart__subtotal text-right"><span class="money">$735.00</span></span>
+          </div>
+          <div class="col-md-3">
+            <div class="checkout-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="cart-info d-flex justify-content-between">
+                    <strong>Subtotal:</strong>
+                    <strong class="cart-subtotal">{{ cart.total_price | money_with_currency }}</strong>
                   </div>
-                  <div class="cart__shipping">Shipping &amp; taxes calculated at checkout</div>
-                  <p class="cart_tearm">
-                    <label>
-                      <input type="checkbox" name="tearm" id="cartTearm" class="checkbox" value="tearm" required="">
-                       I agree with the terms and conditions</label>
-                  </p>
-                  <input type="submit" name="checkout" id="cartCheckout" class="btn btn--small-wide checkout" value="Checkout" disabled="disabled">
-                  <div class="paymnet-img"><img src="assets/images/payment-img.jpg" alt="Payment"></div>
+                  <hr class="my-3">
+                  <div class="cart-note">
+                    <label>Note:</label>
+                    <textarea class="form-control" name="note" placeholder="Note">{{ cart.note }}</textarea>
+                  </div>
+                  <div class="cart-actions">
+                    <button type="submit" name="update" class="btn btn-primary w-100 my-2">Update</button>
+                    <button type="submit" name="checkout" class="btn btn-secondary w-100">Checkout</button>
+                  </div>
                 </div>
-
-            </div>
-        </div><!--  End of row  -->
-      {% else %}
-        <div class="empty_cart text-center">
-          {% if settings.empty_cart != nil %}
-          <img src="{{ settings.empty_cart | img_url:'medium' }}" alt="{{ settings.empty_cart.alt | escape }}">
-          {% endif %}
-          <div class="message">
-            <p>Woops! No Items in your cart! Add some favorite products in your cart!</p>
-            <div class="actions">
-              <a href="{{ routes.all_products_collection_url }}" class="button btn">Browse products</a>
+              </div>
             </div>
           </div>
         </div>
-        
-      {% endif %}
-    </div>
-    
+      </form>
+    {% else %}
+      <div class="text-center">
+        <p>Your Cart is empty!</p>
+      </div>
+    {% endunless %}
+  </div>
 </div>
-<!--End Body Content-->
+
 {% schema %}
-  {
-    "name": "Cart template",
-    "settings": []
-  }
+{
+  "name": "Cart Template",
+  "settings": []
+}
 {% endschema %}
-
-{% stylesheet %}
-{% endstylesheet %}
-
-{% javascript %}
-{% endjavascript %}

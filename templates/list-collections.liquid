@@ -1,0 +1,31 @@
+<div class="list-collections-temlate">
+  <div class="container">
+    <div class="header">
+      <h2>{{ page_title }}</h2>
+    </div>
+    <div class="main-collections my-5">
+      <div class="row">
+        {% for collection in collections %}
+          {% unless collection.handle contains 'frontpage' %}
+            <div class="col-md-3">
+              <div class="card">
+                <div class="card-body">                  
+                  <div class="collection-img">
+                    {% if collection.featured_image != blank and collection.products.first != blank %}
+                      <img src="{{ collection.featured_image | img_url:'medium' }}" width="100%" alt="{{ collection.title | escape}}">
+                    {% else %}
+                      <img src="{{ collection.products.first.featured_image | img_url:'medium' }}" width="100%" alt="{{ collection.title | escape }}">
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <h5>{{ collection.title | escape | link_to:collection.url }}</h5>
+                </div>
+              </div>
+            </div>
+          {% endunless %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,108 +1,46 @@
 <!doctype html>
 <html class="no-js supports-no-cookies" lang="{{ shop.locale }}">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="description" content="description">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="{{ settings.color_accent }}">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="canonical" href="{{ canonical_url }}">
-  <!-- Favicon -->
-  {%- if settings.favicon != blank -%}
-  <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
-  {%- endif -%}
-  
-  {%- capture seo_title -%}
-    {{ page_title }}
-    {%- if current_tags -%}
-      {%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
-    {%- endif -%}
-    {%- if current_page != 1 -%}
-      &ndash; {{ 'general.meta.page' | t: page: current_page }}
-    {%- endif -%}
-    {%- assign escaped_page_title = page_title | escape -%}
-    {%- unless escaped_page_title contains shop.name -%}
-      &ndash; {{ shop.name }}
-    {%- endunless -%}
-  {%- endcapture -%}
-  
-  <title>{{ seo_title | strip }}</title>
-  <!-- Plugins CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="{{ 'plugins.css' | asset_url }}">
-  <!-- Bootstap CSS -->
-  <link rel="stylesheet" href="{{ 'bootstrap.min.css' | asset_url }}">
-  <!-- Main Style CSS -->
-  <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
-  <link rel="stylesheet" href="{{ 'style.css' | asset_url }}">
-  <link rel="stylesheet" href="{{ 'responsive.css' | asset_url }}">
+ 
+  <link href="{{ 'bootstrap.min.css' | asset_url }}" rel="stylesheet">
+  <title>
+      {% if template.name == 'index' %}
+        {{ shop.name }}
+      {% else %}
+        {{ page.title | escape }}
+      {% endif %}
+    </title>
 
   {%- if page_description -%}
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
 
-  {% include 'social-meta-tags' %}
-  {% include 'css-variables' %}
-  <script>
-    document.documentElement.className = document.documentElement.className.replace('no-js', '');
+  <!-- jQuery Library -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  
 
-    window.theme = {
-      strings: {
-        addToCart: {{ 'products.product.add_to_cart' | t | json }},
-        soldOut: {{ 'products.product.sold_out' | t | json }},
-        unavailable: {{ 'products.product.unavailable' | t | json }}
-      },
-      moneyFormat: {{ shop.money_format | json }}
-    };
-  </script>
-  <script src="{{ 'common.js' | asset_url }}"></script>
-
-  <!-- Including Jquery -->
-     <script src="{{ 'jquery-3.3.1.min.js' | asset_url }}"></script>
-     <script src="{{ 'modernizr-3.6.0.min.js' | asset_url }}"></script>
-     <script src="{{ 'jquery.cookie.js' | asset_url }}"></script>
-     <script src="{{ 'wow.min.js' | asset_url }}"></script>
-     <!-- Including Javascript -->
-     <script src="{{ 'bootstrap.min.js' | asset_url }}"></script>
-     <script src="{{ 'plugins.js' | asset_url }}"></script>
-     <script src="{{ 'popper.min.js' | asset_url }}"></script>
-     <script src="{{ 'lazysizes.js' | asset_url }}"></script>
-     <script src="{{ 'money-format.js' | asset_url }}"></script>
-    
-
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
 
   {{ content_for_header }}
 </head>
 
 <body id="{{ page_title | handle }}" class="template-{{ template.name | handle }}">
-  <div id="pre-loader">
-    <img src="{{ 'loader.gif' | asset_url }}" alt="Loading..." />
-  </div>
-  <div class="pageWrapper">
-    {% section 'top-header' %}
-    {% section 'header' %}
 
-    <main role="main" id="page-content">
+  <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+<!-- Header start -->
+  {% section 'header' %}
+<!-- Header end -->
+  <main role="main" id="MainContent">
     {{ content_for_layout }}
-    </main>
+  </main>
+<!-- Footer start -->
+  {% section 'footer' %}
+<!-- Footer end -->
+  <script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer></script>
 
-    {% render 'quick-view-modal' %}
-    
-    {% section 'footer' %}
-  </div>
-  <script>
-     window.routes = {
-        cart_add_url: '{{ routes.cart_add_url }}',
-        cart_change_url: '{{ routes.cart_change_url }}',
-        cart_update_url: '{{ routes.cart_update_url }}'
-      };
-      window.cartStrings = {
-        error: `Something is wrong`,
-        quantityError: `You can only add [quantity] of this item to your cart`
-      }
-  </script>
-<!--   Main scripts   -->
-     <script src="{{ 'main.js' | asset_url }}"></script>
-     <script src="{{ 'theme.js' | asset_url }}"></script>    
 </body>
 </html>

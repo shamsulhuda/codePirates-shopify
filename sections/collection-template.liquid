@@ -1,0 +1,150 @@
+{%- assign product_limit = section.settings.product_per_page -%}
+{%- assign show_second_img = section.settings.show_second_img -%}
+{%- assign show_vendor = section.settings.show_vendor -%}
+{%- assign enable_filtering = section.settings.enable_filtering -%}
+
+{% liquid
+  case section.settings.number_of_col
+    when 2
+      assign column_desk = 'col-lg-6 col-md-6 col-sm-12'
+    when 3
+      assign column_desk = 'col-lg-4 col-md-4 col-sm-12'
+    when 4
+      assign column_desk = 'col-lg-3 col-md-3 col-sm-12'
+    when 6
+      assign column_desk = 'col-lg-2 col-md-2 col-sm-12'
+    else
+      assign column_desk = 'col-lg-4 col-md-4 col-sm-12'
+  endcase
+%}
+
+<div class="{%- if enable_filtering -%}container-fluid {%- else %} container{%- endif -%}">
+  <div class="row flex-nowrap">
+    {% if enable_filtering %}
+      <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white">
+        {% render 'collection-filter', collection: collection %}
+      </div>
+    {% endif %}
+    <div class="col py-3">
+      <div class="collection-header">
+        <div class="d-flex justify-content-between">
+          <div class="product-counter">
+            <h3 class="heading">{{ collection.title | escape }}</h3>
+            {% if collection.description != blank %}
+              <div class="collection-description">{{ collection.description }}</div>
+            {% endif %}
+          </div>
+          <div class="sort-by--container">
+            <div class="d-flex">
+              <label>Product Sort</label>
+              <select id="sort-by" class="sort-by form-control from-control-sm">
+                {% for option in collection.sort_options %}
+                  <option
+                    value="{{ option.value }}"
+                    {% if option.value == collection.sort_by %}
+                      selected
+                    {% endif %}
+                  >
+                    {{ option.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="filter-heading">
+        <p>Total products: ({{ collection.all_products_count }})</p>
+      </div>
+      <div class="collection-products my-3">
+        {% paginate collection.products by product_limit -%}
+          <div class="row">
+            {% for product in collection.products %}
+              {%- render 'product-card',
+                product: product,
+                column: column_desk,
+                show_second_img: show_second_img,
+                show_vendor: show_vendor
+              -%}
+            {% endfor %}
+          </div>
+
+          <div class="pagination justify-content-center mt-5">
+            {% render 'pagination', paginate: paginate %}
+          </div>
+        {% endpaginate %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  Shopify.queryParams = {};
+  if(location.search.length){
+    for(let keyValue, i=0, queries = location.search.substr(1).split('&'); i < queries.length; i++){
+      keyValue = queries[i].split('=');
+      if(keyValue.length > 1){
+        Shopify.queryParams[decodeURIComponent(keyValue[0])] = decodeURIComponent(keyValue[1]);
+      }
+    }
+  }
+
+  document.querySelector('.sort-by').addEventListener('change', function(e) {
+    let value = e.currentTarget.value;
+    Shopify.queryParams.sort_by = value;
+    location.search = new URLSearchParams(Shopify.queryParams).toString();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Collection template",
+  "settings": [
+    {
+      "type":"header",
+      "content": "product settings"
+    },
+    {
+      "type": "range",
+      "id": "product_per_page",
+      "label": "Product per page",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "number_of_col",
+      "label": "Number of column on Desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Product Card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_second_img",
+      "label": "Show second image on hover",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable Filtering",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+

@@ -49,43 +49,6 @@
     ]
   },
   {
-    "name": "Product",
-    "settings": [
-      {
-        "type": "checkbox",
-        "id": "enable_product_scnd_img",
-        "label": "Enable product second image",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_quick_view",
-        "label": "Enable product quick view",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_product_badge",
-        "label": "Enable product badges",
-        "default": true
-      },
-      {
-        "type": "header",
-        "content": "Currency codes"
-      },
-      {
-        "type": "paragraph",
-        "content": "Note that cart and checkout totals will always show the currency code, and itemized, unit, and installment prices will not."
-      },
-      {
-        "type": "checkbox",
-        "id": "currency_code_enable",
-        "label": "Show currency codes",
-        "default": true
-      }
-    ]
-  },
-  {
     "name": "Social media",
     "settings": [
       {
@@ -96,7 +59,7 @@
         "type": "image_picker",
         "id": "share_image",
         "label": "Image",
-        "info": "Shown when sharing a link on social media. [Learn more](https:\/\/help.shopify.com\/manual\/using-themes\/troubleshooting\/showing-social-media-thumbnail-images\/) about image thumbnails."
+        "info": "Shown when sharing a link on social media. [Learn more](https://help.shopify.com/manual/using-themes/troubleshooting/showing-social-media-thumbnail-images/) about image thumbnails."
       },
       {
         "type": "header",
@@ -180,11 +143,6 @@
         "id": "cart_notes_enable",
         "label": "Enable cart notes",
         "default": true
-      },
-      {
-        "type": "image_picker",
-        "id": "empty_cart",
-        "label": "Empty cart image"
       }
     ]
   },
@@ -196,17 +154,6 @@
         "id": "favicon",
         "label": "Favicon image",
         "info": "Will be scaled down to 32 x 32px"
-      }
-    ]
-  },
-  {
-    "name": "Settings",
-    "settings": [
-      {
-        "type": "checkbox",
-        "id": "enable_lazyload",
-        "label": "Enable lazyload",
-        "default": true
       }
     ]
   }

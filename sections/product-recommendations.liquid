@@ -1,31 +1,30 @@
-<!--Related Product Slider-->
-{% if section.settings.enable_recomendation %}
+{% assign limit = section.settings.limit %}
 {% liquid
-assign product_limit = section.settings.product_limit
-assign full-width = section.settings.full-width
-assign title-center = section.settings.title-center
-
-assign product_to_show = section.settings.product_to_show
-assign enable_arrows = section.settings.enable_arrows
-assign slide_to_scroll = section.settings.slide_to_scroll
-assign autoplay = section.settings.enable_autoplay
+  case limit
+    when 1
+    assign column = 'col-md-6'
+    when 2
+    assign column = 'col-md-6'
+    when 3
+    assign column = 'col-md-4'
+    when 4
+    assign column = 'col-md-3'
+  endcase
 %}
 
-<!--Related Product Slider-->
-<div class="product-recommendations related-product grid-products {% if full-width %}container-fluid{% else %}container{% endif %}"
-  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{- product_limit -}}" data-template="{{ template.name }}">
-  <header class="section-header {% if title-center %}text-center{% else %}text-left{% endif %}">
-    <h2 class="section-header__title h2"><span>{{ section.settings.title | escape }}</span></h2>
-    <p class="sub-heading">{{ section.settings.sub-heading }}</p>
-  </header>
-  <div class="productPageRecomm" data-slick='{"arrows": {{ enable_arrows}}, "slidesToShow": {{ product_to_show }}, "slidesToScroll": {{ slide_to_scroll }},"autoplay":{{ autoplay }}}'>
-    {%- for product in recommendations.products -%}
-    {% render 'product-card', product: product %} 
-    {% endfor %}
+<div class="container">
+  <div class="product-recommendations" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{- limit -}}&intent=related">
+    {%- if recommendations.performed? and recommendations.products_count > 0 -%}   
+        <h2>{{ section.settings.section_title | default: "Recommended Products" }}</h2>    
+      <div class="row">
+        {%- for product in recommendations.products -%}
+          {% render 'product-card', product:product, column: column %}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
   </div>
 </div>
-<!--End Related Product Slider-->
-{% endif %}
+
 
 {% javascript %}
   const handleIntersection = (entries, observer) => {
@@ -34,7 +33,7 @@ assign autoplay = section.settings.enable_autoplay
     observer.unobserve(productRecommendationsSection);
 
     const url = productRecommendationsSection.dataset.url;
-
+    
     fetch(url)
       .then(response => response.text())
       .then(text => {
@@ -52,98 +51,30 @@ assign autoplay = section.settings.enable_autoplay
   };
 
   const productRecommendationsSection = document.querySelector('.product-recommendations');
-  const observer = new IntersectionObserver(handleIntersection, {rootMargin: '0px 0px 100px 0px'});
+  const observer = new IntersectionObserver(handleIntersection, {rootMargin: '0px 0px 200px 0px'});
 
   observer.observe(productRecommendationsSection);
 {% endjavascript %}
 
 {% schema %}
   {
-    "name": "Product recomendations",
-    "settings": [      
-      {
-        "type": "checkbox",
-        "id": "enable_recomendation",
-        "label": "Enable recomended product",
-        "default": true
-      },
+    "name": "Product recommendations",
+    "settings": [
       {
         "type": "text",
-        "id": "title",
+        "id": "section_title",
         "label": "Section title",
-        "default": "You might also like"
+        "default": "You May Also Like"
       },
       {
-        "type": "richtext",
-        "id": "sub-heading",
-        "label": "Sub-heading"
-      },      
-      {
         "type": "range",
-        "id": "product_limit",
+        "id": "limit",
         "label": "Product limit",
-        "min": 4,
-        "max": 20,
-        "step": 1,
-        "default": 10
-      },
-      {
-        "type": "checkbox",
-        "id": "title-center",
-        "label": "Title center",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "full-width",
-        "label": "Enable Full-width",
-        "default": false
-      },
-      {
-        "type": "header",
-        "content": "Slider control"
-      },
-      {
-        "type": "range",
-        "id": "product_to_show",
-        "label": "Product to show",
-        "min": 2,
-        "max": 10,
-        "step": 1,
-        "default": 4
-      },
-      {
-        "type": "range",
-        "id": "slide_to_scroll",
-        "label": "Slide to scroll",
         "min": 1,
-        "max": 10,
+        "max": 4,
         "step": 1,
-        "default": 2
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_arrows",
-        "label": "Enable arrows",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_autoplay",
-        "label": "Enable autoplay",
-        "default": false
-      },
-      {
-        "type": "header",
-        "content": "Recently view"
-      },
-      {
-        "type": "checkbox",
-        "id": "enable-recent-view",
-        "label": "Enable recently viewed products",
-        "default": false
+        "default": 3
       }
     ]
   }
 {% endschema %}
-
