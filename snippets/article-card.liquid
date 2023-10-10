@@ -1,0 +1,37 @@
+{% comment %}
+Receives-
+  article: article object
+  column: variable, bootstrap column (optional)
+{% endcomment %}
+
+{% capture date %}
+  {{ article.published_at | time_tag: format: 'month_day_year' }}
+{% endcapture %}
+<div class="{{ column | default: 'col-md-4'}} my-2">
+  <div class="card product-card">
+    <div class="card-body">
+      <a href="{{ article.url }}">
+        {% if article.image != blank %}         
+          <img src="{{ article.image | img_url:'medium' }}" width="100%" class="card-img" alt="{{ article.title }}">                 
+        {% else %}
+          {{ 'image' | placeholder_svg_tag }}
+        {% endif %}
+      </a>
+    </div>
+    <div class="card-footer">
+      <p>{{ date }}</p>
+      <p>Author:: {{ article.author }}</p>
+      <a href="{{ article.url }}">{{ article.title }}</a>
+    </div>
+    <div class="content-summary">
+      {% if article.excerpt != blank %}
+        {{ article.excerpt }}
+      {% else %}
+        {{ article.content | strip_html | truncatewords: 25 }}
+      {% endif %}
+    </div>
+    <div class="action">
+      <a href="{{ article.url }}" class="btn btn-primary w-100">Read More</a>
+    </div>
+  </div>
+</div>

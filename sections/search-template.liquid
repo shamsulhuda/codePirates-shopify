@@ -1,0 +1,46 @@
+<div class="search_section_{{ section.id }}">
+  <div class="search-header py-5">
+    <div class="jumbotron jumbotron-fluid text-center">
+      <h2 class="heading">Search page</h2>
+      <div class="search-page-form d-flex w-70 justify-content-center">
+        <form action="{{ routes.search_url }}">
+          <div class="input-group">
+            <input
+              type="text"
+              name="q"
+              class="form-control"
+              placeholder="Search"
+              value="{{ search.terms | escape }}"
+            >
+            <button class="btn btn-outline-secondary" type="submit">
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="search-results">
+      <div class="row">
+        {% for item in search.results %}
+          {% case item.object_type %}
+            {% when 'product' %}
+            {%- render 'product-card', product: item -%}
+            {% when 'article' %}
+            {% render 'article-card', article: item %}
+            {% when 'page' %}
+            {% render 'page-card', page:item %}
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Search template",
+    "settings": []
+  }
+{% endschema %}

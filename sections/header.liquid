@@ -6,11 +6,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    {% if logo != null %}      
-      <img src="{{ logo | img_url:width:200 }}" alt="{{ shop.name }}">
-    {% else %}
-      <a class="navbar-brand" href="#">{{ shop.name }}</a>
-    {% endif %}
+    <a class="navbar-brand" href="{{ routes.root_url }}">
+      {% if logo != null %}
+        <img src="{{ logo | img_url:width:200 }}" alt="{{ shop.name }}">
+      {% else %}
+        {{ shop.name }}
+      {% endif %}
+    </a>
     <button
       class="navbar-toggler"
       type="button"
@@ -25,25 +27,70 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         {% for link in menu.links %}
-        <li class="nav-item {% if link.links.size > 0 %}dropdown{% endif %}">
-          <a class="nav-link {% if link.links.size > 0 %}dropdown-toggle{% endif %}" href="{{ link.url }}" {% if link.links.size > 0 %} id="navbarDropdown_{{ forloop.index }}" role="button" data-bs-toggle="dropdown" aria-expanded="false"{% endif %}>
-          {{ link.title }}
-          </a>
-          {% if link.links.size > 0 %}
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            {% for dropLink in link.links %}
-            <li><a class="dropdown-item" href="{{ dropLink.url }}">{{ dropLink.title }}</a></li>
-            {% endfor %}
-          </ul>
-          {% endif %}
-        </li>
+          <li class="nav-item {% if link.links.size > 0 %}dropdown{% endif %}">
+            <a class="nav-link {% if link.links.size > 0 %}dropdown-toggle{% endif %}" href="{{ link.url }}"
+              {% if link.links.size > 0 %}
+                id="navbarDropdown_{{ forloop.index }}" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+              {% endif %}
+            >
+              {{ link.title }}
+            </a>
+            {% if link.links.size > 0 %}
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for dropLink in link.links %}
+                  <li>
+                    <a class="dropdown-item" href="{{ dropLink.url }}">{{ dropLink.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
         {% endfor %}
       </ul>
       {% if enable_search %}
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      <div class="d-flex align-items-center">
+        <form action="{{ routes.search_url }}">
+          <div class="input-group">
+            <input
+              type="text"
+              name="q"
+              class="form-control"
+              placeholder="Search"
+              value="{{ search.terms | escape }}"
+            >
+            <button class="btn btn-outline-secondary" type="submit">
+              Search
+            </button>
+          </div>
+        </form>
+        <div class="cart-counter mx-2">
+          <a href="{{ routes.cart_url }}" class="d-flex">
+            {% if cart.item_count > 0 %}
+            <span class="shopping-bag">
+              {% render 'icons', icon:'bag-fill' %}
+            </span>
+            (<span class="counter">{{ cart.item_count }}</span>)
+            {% else %}
+              <span class="shopping-bag">
+              {% render 'icons', icon:'bag' %}
+              </span>
+            {% endif %}
+          </a>
+        </div>
+        {% if shop.customer_accounts_enabled %}
+        <div class="customer-account">
+          {% if customer %}
+            <a href="{{ routes.account_url }}">
+              {% render 'icons', icon: 'person-check', size:'24' %}
+            </a>
+          {% else %}
+            <a href="{{ routes.account_login_url }}">
+              {% render 'icons', icon:'person', size:'24' %}
+            </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>        
       {% endif %}
     </div>
   </div>

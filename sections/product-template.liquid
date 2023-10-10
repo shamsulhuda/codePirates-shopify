@@ -7,18 +7,12 @@
           <div class="col-md-6">
             <div class="images p-3">
               <div class="text-center p-4">
-                <img
-                  id="main-image"
-                  src="{{ product.featured_image | img_url:'original' }}"
-                  width="100%">
+                <img id="main-image" src="{{ product.featured_image | img_url:'original' }}" width="100%">
               </div>
               {% if product.images.size > 1 %}
                 <div class="thumbnail text-center">
                   {% for image in product.images %}
-                    <img
-                      onclick="change_image(this)"
-                      src="{{ image.src | img_url:'original' }}"
-                      width="70">
+                    <img onclick="change_image(this)" src="{{ image.src | img_url:'original' }}" width="70">
                   {% endfor %}
                 </div>
               {% endif %}
@@ -28,48 +22,44 @@
             <div class="product p-4">
               <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-                  <i class="fa fa-long-arrow-left"></i>
-                  <span class="ml-1">Back</span>
+                  <i class="fa fa-long-arrow-left"></i> <span class="ml-1">Back</span>
                 </div>
               </div>
               {%- form 'product', product, id: product_form_id -%}
-                <input
-                  type="hidden"
-                  name="id"
-                  value="{{ product.selected_or_first_available_variant.id }}">
+                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                 {% for block in section.blocks %}
                   {% case block.type %}
                     {% when 'vendor' %}
-                    <div class="mt-4 mb-3">
-                      <span class="text-uppercase text-muted brand">{{ product.vendor }}</span>
-                    </div>
+                      <div class="mt-4 mb-3">
+                        <span class="text-uppercase text-muted brand">{{ product.vendor }}</span>
+                      </div>
                     {% when 'title' %}
-                    <h5 class="text-uppercase">{{ product.title | escape }}</h5>
+                      <h5 class="text-uppercase">{{ product.title | escape }}</h5>
 
                     {% when 'price' %}
-                    <div class="price d-flex flex-row align-items-center">
-                      {% render 'price', product: product %}
-                    </div>
+                      <div class="price d-flex flex-row align-items-center">
+                        {% render 'price', product: product %}
+                      </div>
                     {% when 'description' %}
-                    <p class="product-description">
-                      {{ product.description }}
-                    </p>
+                      <p class="product-description">
+                        {{ product.description }}
+                      </p>
                     {% when 'liquid' %}
-                    {{ block.settings.liquid }}
+                      {{ block.settings.liquid }}
                     {% when 'variants' %}
-                    {% unless product.has_only_default_variant %}
-                      <div class="product-variants mt-5" id="product-variants">
-                        {% for option in product.options_with_values %}
-                          {% liquid
+                      {% unless product.has_only_default_variant %}
+                        <div class="product-variants mt-5" id="product-variants">
+                          {% for option in product.options_with_values %}
+                            {% liquid
                               assign variants_available_arr = product.variants | map: 'available'
                               assign variants_option1_arr = product.variants | map: 'option1'
                               assign variants_option2_arr = product.variants | map: 'option2'
                               assign variants_option3_arr = product.variants | map: 'option3'
                             %}
-                          <div class="option {{ option.name | downcase }} mt-3">
-                            <h6 class="text-uppercase">{{ option.name }}</h6>
-                            {% for value in option.values %}
-                              {% liquid
+                            <div class="option {{ option.name | downcase }} mt-3">
+                              <h6 class="text-uppercase">{{ option.name }}</h6>
+                              {% for value in option.values %}
+                                {% liquid
                                   assign option_disabled = true
 
                                   for option1_name in variants_option1_arr
@@ -89,64 +79,45 @@
                                     endcase
                                   endfor
                                 %}
-                              <label class="radio">
-                                <input
-                                  type="radio"
-                                  name="{{- option.name | handleize -}}"
-                                  value="{{- value | handleize | escape -}}"
-                                  {% if option.selected_value == value %}
-                                  checked
-                                  {% endif %}
-                                  {% if option_disabled %}
-                                  disabled
-                                  {% endif %}>
-                                <span
-                                  {% if option_disabled %}
-                                  title="unavailable"
-                                  {% endif %}>
-                                  {{ value | escape }}
-                                </span>
-                              </label>
-                            {% endfor %}
-                          </div>
-                        {% endfor %}
-                      </div>
-                      <select
-                        name="id"
-                        id="variant_selector"
-                        class="d-none">
-                        {% for variant in product.variants %}
-                          <option
-                            value="{{ variant.id }}"
-                            data-name="{{ variant.title | handleize | escape }}"
-                            {%- if variant == current_variant %}
-                            selected
-                            {%- endif -%}
-                            {%- if variant.available == false %}
-                            data-sold="true"
-                            {% endif %}>{{ variant.title | escape }}</option>
-                        {% endfor %}
-                      </select>
-                    {% endunless %}
+                                <label class="radio">
+                                  <input
+                                    type="radio"
+                                    name="{{- option.name | handleize -}}"
+                                    value="{{- value | handleize | escape -}}"
+                                    {% if option.selected_value == value %}
+                                      checked
+                                    {% endif %}
+                                    {% if option_disabled %}
+                                      disabled
+                                    {% endif %}
+                                  >
+                                  <span
+                                    {% if option_disabled %}
+                                      title="unavailable"
+                                    {% endif %}
+                                  >
+                                    {{ value | escape }}
+                                  </span>
+                                </label>
+                              {% endfor %}
+                            </div>
+                          {% endfor %}
+                        </div>
+                        <select name="id" id="variant_selector" class="d-none">
+                          {% for variant in product.variants %}
+                          <option value="{{ variant.id }}" data-name="{{ variant.title | handleize | escape }}" {%- if variant == current_variant %} selected{%- endif -%} {%- if variant.available == false %} data-sold="true"{% endif %}>{{ variant.title | escape }}</option>
+                          {% endfor %}
+                        </select>
+                      {% endunless %}
                     {% when 'quantity' %}
-                    <div class="quantity-selectior mt-4">
-                      <input
-                        type="number"
-                        class="form-control"
-                        name="quantity"
-                        value="1"
-                        min="1">
-                    </div>
-                    {% when 'add_to_cart_btn' %}
-                    <div class="cart mt-4 align-items-center">
-                      <button
-                        type="submit"
-                        name="add"
-                        class="btn btn-default text-uppercase mr-2 px-4 add_to_cart"
-                        id="add-to-cart-button">Add to cart</button>
-                      <i class="fa fa-heart text-muted"></i>
-                      <i class="fa fa-share-alt text-muted"></i>
-                    </div>
+                      <div class="quantity-selectior mt-4">
+                        <input type="number" class="form-control" name="quantity" value="1" min="1">
+                      </div>
+                    {% when 'add_to_cart_btn' %}                      
+                      <div class="cart mt-4 align-items-center">
+                        <button type="submit" name="add" class="btn btn-default text-uppercase mr-2 px-4 add_to_cart" id="add-to-cart-button">Add to cart</button>
+                        <i class="fa fa-heart text-muted"></i> <i class="fa fa-share-alt text-muted"></i>
+                      </div>
                   {% endcase %}
                 {% endfor %}
               {% endform %}
@@ -159,122 +130,128 @@
 </div>
 
 <script>
-  function change_image(image) {
+  function change_image(image){
     var main_image = document.getElementById("main-image");
     main_image.src = image.src;
   }
-  window.addEventListener('DOMContentLoaded', async () => {
-    const product_url = '{{ product.url }}';
-    const variantSelector = async () => {
-      const options = document.querySelectorAll('#product-variants .option');
-      let option_value = [];
-      options.forEach(elm => {
-        let selected = elm.querySelector('input:checked').value
-        option_value.push(selected);
-      })
-      option_value = option_value.join('-');
-      console.log(option_value);
+ window.addEventListener('DOMContentLoaded', async ()=> {
+   const product_url = '{{ product.url }}';
+   const variantSelector = async ()=>{
+     const options = document.querySelectorAll('#product-variants .option');
+     let option_value = [];
+     options.forEach(elm=>{
+       let selected = elm.querySelector('input:checked').value
+       option_value.push(selected);
+     })
+     option_value = option_value.join('-');
+     console.log(option_value);
 
-      const selOptions = document.querySelectorAll('#variant_selector option');
-      selOptions.forEach(elm => {
-        const name = elm.dataset.name;
-        const sold = elm.dataset.sold;
-        elm.removeAttribute('selected');
-        if (name == option_value) {
-          const btn = document.querySelector('[name="add"]');
-          if (sold) {
-            btn.setAttribute('disabled', 'true');
-            btn.innerText = 'Sold Out';
-          } else {
-            elm.setAttribute('selected', 'true');
-            btn.removeAttribute('disabled');
-            btn.innerText = 'Add To Cart'
-          }
-        }
-      })
-    }
-    await variantSelector();
-    const optionSelectors = document.querySelectorAll('#product-variants label.radio');
-    optionSelectors.forEach((elm) => {
-      elm.addEventListener('click', () => {
-        variantSelector().then(() => {
-          let variantId = document.querySelector('#variant_selector');
-          variantId = variantId.value;
-          let url = `${product_url}?variant=${variantId}`;
-          window.history.replaceState({}, '', url);
-        })
-      })
-    })
-  })
+     const selOptions = document.querySelectorAll('#variant_selector option');
+     selOptions.forEach(elm=>{
+       const name = elm.dataset.name;
+       const sold = elm.dataset.sold;
+       elm.removeAttribute('selected');
+       if(name == option_value){
+         const btn = document.querySelector('[name="add"]');
+         if(sold){
+           btn.setAttribute('disabled', 'true');
+           btn.innerText = 'Sold Out';
+         }else{           
+           elm.setAttribute('selected', 'true');
+           btn.removeAttribute('disabled');
+           btn.innerText = 'Add To Cart'
+         }
+       }
+     })      
+   }
+   await variantSelector();
+   const optionSelectors = document.querySelectorAll('#product-variants label.radio');
+   optionSelectors.forEach((elm)=>{
+     elm.addEventListener('click',()=>{
+       variantSelector().then(()=>{
+         let variantId = document.querySelector('#variant_selector');
+         variantId = variantId.value;
+        let url = `${product_url}?variant=${variantId}`;
+        window.history.replaceState({},'',url);
+       })
+     })
+   })   
+ }) 
 </script>
 
 {% schema %}
-  {
-    "name": "Product Template",
-    "settings": [],
-    "blocks": [
-      {
-        "type": "title",
-        "name": "Tittle",
-        "limit": 1
-      },
-      {
-        "type": "vendor",
-        "name": "Vendor",
-        "limit": 1
-      },
-      {
-        "type": "price",
-        "name": "Price",
-        "limit": 1
-      },
-      {
-        "type": "description",
-        "name": "Description",
-        "limit": 1
-      }, {
-        "type": "quntity",
-        "name": "Quantity Selector",
-        "limit": 1
-      }, {
-        "type": "variants",
-        "name": "Variants picker",
-        "limit": 1
-      }, {
-        "type": "add_to_cart_btn",
-        "name": "Add to Cart Button",
-        "limit": 1
-      }, {
-        "type": "liquid",
-        "name": "Liquid code",
-        "settings": [
-          {
-            "type": "liquid",
-            "id": "liquid",
-            "label": "Liquid code"
-          }
-        ]
-      }
-    ],
-    "default": {
-      "blocks": [
+{
+  "name": "Product Template",
+  "settings": [],
+  "blocks":[
+    {
+      "type": "title",
+      "name": "Tittle",
+      "limit": 1
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "quntity",
+      "name": "Quantity Selector",
+      "limit": 1
+    },
+    {
+      "type": "variants",
+      "name": "Variants picker",
+      "limit": 1
+    },
+    {
+      "type": "add_to_cart_btn",
+      "name": "Add to Cart Button",
+      "limit": 1
+    },
+    {
+      "type": "liquid",
+      "name": "Liquid code",
+      "settings": [
         {
-          "type": "title"
-        },
-        {
-          "type": "price"
-        },
-        {
-          "type": "description"
-        },
-        {
-          "type": "variants"
-        }, {
-          "type": "quntity"
-        }, {
-          "type": "add_to_cart_btn"
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid code"
         }
       ]
     }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "title"
+      },
+      {
+        "type": "price"
+      },
+      {
+        "type": "description"
+      },
+      {
+        "type": "variants"
+      },
+      {
+        "type": "quntity"
+      },
+      {
+        "type": "add_to_cart_btn"
+      }
+    ]
   }
+}
 {% endschema %}

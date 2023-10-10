@@ -1,0 +1,14 @@
+<form action="{{ routes.search_url }}">
+  <div class="input-group mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search"
+      name="q"
+      value="{{ search.terms | escape }}"
+    >
+    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+      {% render 'icons', icon: 'search' %}
+    </button>
+  </div>
+</form>

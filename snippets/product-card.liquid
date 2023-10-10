@@ -1,4 +1,10 @@
-<div class="{{ column }} my-2">
+{% comment %}
+Receives-
+  product: product object
+  column: variable, bootstrap column (optional)
+{% endcomment %}
+
+<div class="{{ column | default: 'col-md-3'}} my-2">
   <div class="card product-card">
     <div class="card-body">
       <a href="{{ product.url }}">

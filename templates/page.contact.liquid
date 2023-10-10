@@ -1,54 +1,79 @@
-<h1>{{ page.title }}</h1>
+<div class="page-contact">
+  <div class="container">
+    <div class="page-header text-center py-5">
+      <h1>{{ page.title }}</h1>
+    </div>
+    {% if page.content %}
+    <div class="page-content">
+      {{ page.content }}
+    </div>
+    {% endif %}
+    <div class="contect-form">
+      {% form 'contact' %}
 
-<div class="rte">
-  {{ page.content }}
+      {% if form.posted_successfully? %}
+      <div class="form-success-message text-success">
+        <p>Form submited successfully!</p>
+      </div>
+      {% endif %}
+
+      {{ form.errors | default_errors }}
+        
+        <div class="row my-3">
+          <div class="col">
+            <input 
+              type="text" 
+              class="form-control" 
+              name="contact[first_name]" 
+              placeholder="First name"
+              value="{%- if form[first_name] -%} {{- form.first_name -}}{%- else -%} {{- customer.first_name -}}{%- endif -%}"
+              required
+              >
+          </div>
+          <div class="col">
+            <input type="text" 
+              class="form-control" 
+              name="contact[last_name]" 
+              placeholder="Last name"
+              value="{%- if form[last_name] -%} {{- form.last_name -}}{%- else -%} {{- customer.last_name -}}{%- endif -%}"
+              required
+              >
+          </div>
+        </div>
+        <div class="row my-3">
+          <div class="col">
+            <input type="email" 
+              class="form-control" 
+              name="contact[email]" 
+              placeholder="Email"
+              value="{%- if form[email] -%} {{- form.email -}}{%- else -%} {{- customer.email -}}{%- endif -%}"
+              required
+              >
+          </div>
+          <div class="col">
+            <input type="number" 
+              class="form-control" 
+              name="contact[phone]" 
+              placeholder="Phone"
+              value="{%- if form[phone] -%} {{- form.phone -}}{%- else -%} {{- customer.phone -}}{%- endif -%}"
+              pattern="[0-9\-]*"
+              >
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+          <textarea class="form-control" name="contact[body]" placeholder="Your message...." rows="10">
+            {%- if form.body -%}
+            {{- form.body -}}
+            {%- endif -%}
+          </textarea>
+          </div>
+        </div>
+
+      <div class="action-btn py-4">
+        <button type="submit" class="btn btn-secondary">Send</button>
+      </div>
+      {% endform %}
+    </div>
+  </div>
 </div>
-
-{% form 'contact' %}
-
-  {% if form.posted_successfully? %}
-    <p class="form-success">
-      {{ 'contact.form.post_success' | t }}
-    </p>
-  {% endif %}
-
-  {{ form.errors | default_errors }}
-
-  <label for="ContactFormName">{{ 'contact.form.name' | t }}</label>
-  <input type="text"
-    name="contact[name]"
-    id="ContactFormName"
-    placeholder="{{ 'contact.form.name' | t }}"
-    value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
-
-  <label for="ContactFormEmail">{{ 'contact.form.email' | t }}</label>
-  <input type="email"
-    name="contact[email]"
-    id="ContactFormEmail"
-    placeholder="{{ 'contact.form.email' | t }}"
-    value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
-    spellcheck="false"
-    autocomplete="off"
-    autocapitalize="off">
-
-  <label for="ContactFormPhone">{{ 'contact.form.phone' | t }}</label>
-  <input type="tel"
-    name="contact[phone]"
-    id="ContactFormPhone"
-    placeholder="{{ 'contact.form.phone' | t }}"
-    value="{% if form[phone] %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
-    pattern="[0-9\-]*">
-
-  <label for="ContactFormMessage">{{ 'contact.form.message' | t }}</label>
-  <textarea rows="10"
-    name="contact[body]"
-    id="ContactFormMessage"
-    placeholder="{{ 'contact.form.message' | t }}">
-    {%- if form.body -%}
-      {{- form.body -}}
-    {%- endif -%}
-  </textarea>
-
-  <input type="submit" class="button" value="{{ 'contact.form.send' | t }}">
-
-{% endform %}
