@@ -19,11 +19,12 @@
     <meta name="description" content="{{ page_description | escape }}">
   {%- endif -%}
 
-  <!-- jQuery Library -->
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  
-
   {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  {{ 'common.js' | asset_url | script_tag }}
+
+  <!-- jQuery Library -->
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js" defer></script>
 
   {{ content_for_header }}
 </head>
