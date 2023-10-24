@@ -4,8 +4,23 @@
     "theme_name": "Starter theme",
     "theme_version": "1.0.0",
     "theme_author": "THEME_AUTHOR",
-    "theme_documentation_url": "https:\/\/THEME_DOCUMENTATION_URL.com\/",
-    "theme_support_url": "https:\/\/THEME_SUPPORT_URL.com\/"
+    "theme_documentation_url": "https://THEME_DOCUMENTATION_URL.com/",
+    "theme_support_url": "https://THEME_SUPPORT_URL.com/"
+  },
+  {
+    "name": "Store Settings",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Currency"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_currency_selector",
+        "label": "Enable currency selector",
+        "default": false
+      }
+    ]
   },
   {
     "name": "Colors",

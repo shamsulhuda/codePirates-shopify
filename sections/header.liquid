@@ -47,6 +47,21 @@
           </li>
         {% endfor %}
       </ul>
+      {% if settings.enable_currency_selector %}
+      <div class="currency-area me-3">
+        {% form 'currency' %}
+          <select name="currency" class="shopify-currency-form">
+            {% for currency in shop.enabled_currencies %}
+              {% if currency == cart.currency %}
+              <option selected>{{ currency.iso_code }} ({{ currency.symbol }})</option>
+              {% else %}
+              <option>{{ currency.iso_code }} ({{ currency.symbol }})</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        {% endform %}
+      </div>
+      {% endif %}
       {% if enable_search %}
       <div class="d-flex align-items-center">
         <form action="{{ routes.search_url }}">
