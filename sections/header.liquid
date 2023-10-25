@@ -53,9 +53,9 @@
           <select name="currency" class="shopify-currency-form">
             {% for currency in shop.enabled_currencies %}
               {% if currency == cart.currency %}
-              <option selected>{{ currency.iso_code }} ({{ currency.symbol }})</option>
+              <option selected value="{{ currency.iso_code }}">{{ currency.iso_code }} ({{ currency.symbol }})</option>
               {% else %}
-              <option>{{ currency.iso_code }} ({{ currency.symbol }})</option>
+              <option value="{{ currency.iso_code }}">{{ currency.iso_code }} ({{ currency.symbol }})</option>
               {% endif %}
             {% endfor %}
           </select>
