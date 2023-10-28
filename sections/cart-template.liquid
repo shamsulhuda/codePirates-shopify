@@ -1,7 +1,7 @@
 <div class="cart-page" id="{{ section.id }}">
   <div class="cart-heading bg-dark p-4 mb-4">
     <div class="header d-flex align-items-center justify-content-center">
-      <h3 class="text-light">Your Cart</h3>
+      <h3 class="text-light">{{ 'cart.general.title' | t }}</h3>
     </div>
   </div>
   <div class="container my-5">
@@ -13,10 +13,10 @@
               <table class="table table-responsive">
                 <thead>
                   <tr>
-                    <th>Product info</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Final price</th>
+                    <th>{{ 'cart.label.product' | t }}</th>
+                    <th>{{ 'cart.label.price' | t }}</th>
+                    <th>{{ 'cart.label.quantity' | t }}</th>
+                    <th>{{ 'cart.label.total' | t }}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -116,17 +116,17 @@
               <div class="card">
                 <div class="card-body">
                   <div class="cart-info d-flex justify-content-between">
-                    <strong>Subtotal:</strong>
+                    <strong>{{ 'cart.general.subtotal' | t }}</strong>
                     <strong class="cart-subtotal">{{ cart.total_price | money_with_currency }}</strong>
                   </div>
                   <hr class="my-3">
                   <div class="cart-note">
-                    <label>Note:</label>
-                    <textarea class="form-control" name="note" placeholder="Note">{{ cart.note }}</textarea>
+                    <label>{{ 'cart.general.note' | t }}</label>
+                    <textarea class="form-control" name="note">{{ cart.note }}</textarea>
                   </div>
                   <div class="cart-actions">
-                    <button type="submit" name="update" class="btn btn-primary w-100 my-2">Update</button>
-                    <button type="submit" name="checkout" class="btn btn-secondary w-100">Checkout</button>
+                    <button type="submit" name="update" class="btn btn-primary w-100 my-2">{{ 'cart.general.update' | t }}</button>
+                    <button type="submit" name="checkout" class="btn btn-secondary w-100">{{ 'cart.general.checkout' | t }}</button>
                   </div>
                 </div>
               </div>
@@ -136,7 +136,7 @@
       </form>
     {% else %}
       <div class="text-center">
-        <p>Your Cart is empty!</p>
+        <p>{{ 'cart.general.empty' | t }}</p>
       </div>
     {% endunless %}
   </div>

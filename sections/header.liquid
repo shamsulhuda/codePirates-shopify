@@ -46,7 +46,22 @@
             {% endif %}
           </li>
         {% endfor %}
-      </ul>
+      </ul>  
+      {% if localization.available_languages.size > 1 %}
+      <div class="language_selector-area me-3">
+        {% form 'localization' %}
+        <select name="language_code" class="language_selector">
+          {% for language in localization.available_languages %}
+            {% if language.iso_code == localization.language.iso_code %}
+              <option value="{{ language.iso_code }}" selected>{{ language.endonym_name | capitalize }}</option>
+            {% else %}
+            <option value="{{ language.iso_code }}">{{ language.endonym_name | capitalize }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        {% endform %}
+      </div>
+      {% endif %}
       {% if settings.enable_currency_selector %}
       <div class="currency-area me-3">
         {% form 'currency' %}
